@@ -1,67 +1,74 @@
-"use client";
+// app/page.tsx
 
-import { useState, useEffect } from "react";
-import { generateClient } from "aws-amplify/data";
-import type { Schema } from "@/amplify/data/resource";
-import "./../app/app.css";
-import { Amplify } from "aws-amplify";
-import outputs from "@/amplify_outputs.json";
-import "@aws-amplify/ui-react/styles.css";
-import { useAuthenticator } from "@aws-amplify/ui-react";
+import { revalidatePath } from "next/cache";
 
-Amplify.configure(outputs);
+import { AuthGetCurrentUserServer, cookiesClient } from "@/utils/amplify-utils";
 
-const client = generateClient<Schema>();
+import Logout from "@/components/logout";
 
-export default function App() {
-	const [todos, setTodos] = useState<Array<Schema["Todo"]["type"]>>([]);
+async function App() {
+	const user = await AuthGetCurrentUserServer();
+	const { data: todos } = await cookiesClient.models.Todo.list();
+	const { data: leaderboard } = await cookiesClient.models.Leaderboard.list();
 
-	const { signOut } = useAuthenticator();
+	console.log(leaderboard);
 
-	function listTodos() {
-		client.models.Todo.observeQuery().subscribe({
-			next: (data) => setTodos([...data.items]),
+	// async function wipeLeaderboard() {
+	// 	"use server";
+
+	// 	const { data: allRecords } = await cookiesClient.models.Leaderboard.list();
+	// 	for (const record of allRecords) {
+	// 		await cookiesClient.models.Leaderboard.delete({ id: record.id });
+	// 		console.log("deleted", record.id);
+
+	// 	}
+	// }
+
+	// wipeLeaderboard()
+
+
+	async function addTodo(data: FormData) {
+		"use server";
+		const title = data.get("title") as string;
+		const create = await cookiesClient.models.Todo.create({
+			content: title,
 		});
+		console.log(create);
+		revalidatePath("/");
 	}
 
+	async function addScore(data: FormData) {
+		"use server";
+		if (user) {
+			const score = data.get("score") as string;
+			const create = await cookiesClient.models.Leaderboard.create({
+				userId: user.userId,
+				score: score
+			});
+			console.log(create);
 
-	function deleteTodo(id: string) {
-		client.models.Todo.delete({ id })
-	}
+			revalidatePath("/");
+		}
 
-	useEffect(() => {
-		listTodos();
-	}, []);
-
-	function createTodo() {
-		client.models.Todo.create({
-			content: window.prompt("Todo content"),
-		});
 	}
 
 	return (
-		<main>
-			<h1>My todos</h1>
-			<button onClick={createTodo}>+ new</button>
-			<ul>
-				{todos.map((todo) => (
-					<li
-						key={todo.id}
-						onClick={() => deleteTodo(todo.id)}
-					>
-						{todo.content}
-					</li>
-				))}
-			</ul>
-			<div>
-				🥳 App successfully hosted. Try creating a new todo.
-				<br />
-				<a href="https://docs.amplify.aws/nextjs/start/quickstart/nextjs-app-router-client-components/">
-					Review next steps of this tutorial.
-				</a>
-			</div>
+		<>
+			<h1>Hello, Amplify 👋</h1>
+			{user && <Logout />}
+			{user?.userId || "Not logged in"}
+			<form action={addScore}>
+				<input type="text" name="score" />
+				<button type="submit">Add score</button>
+			</form>
 
-			<button onClick={signOut}>Sign out</button>
-		</main>
+			<ul>
+				{/* {todos && todos.map((todo) => <li key={todo.id}>{todo.content}</li>)} */}
+				{leaderboard && leaderboard.map((entry) => <li key={entry.id}>{entry.score}</li>)}
+			</ul>
+
+		</>
 	);
 }
+
+export default App;
