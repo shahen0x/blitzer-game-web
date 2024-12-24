@@ -5,7 +5,7 @@ const schema = a.schema({
 		.model({
 			content: a.string(),
 		})
-		.authorization((allow) => [allow.publicApiKey()]),
+		.authorization((allow) => [allow.authenticated()]),
 
 	generateRecipe: a.generation({
 		aiModel: a.ai.model('Claude 3.5 Sonnet v2'),
@@ -36,7 +36,7 @@ const schema = a.schema({
 			// leaderboard: a.hasOne('Leaderboard', 'userId'),
 		})
 		.authorization((allow) => [
-			allow.owner().to(['create', 'read', 'update']),
+			allow.authenticated().to(['create', 'read', 'update']),
 			// allow.publicApiKey(),
 		]),
 
@@ -46,7 +46,7 @@ const schema = a.schema({
 			// userProfile: a.belongsTo('UserProfile', 'userId'),
 			score: a.float().required(),
 		})
-		.authorization((allow) => [allow.publicApiKey()]),
+		.authorization((allow) => [allow.authenticated()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
