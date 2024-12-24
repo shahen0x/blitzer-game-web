@@ -22,7 +22,7 @@ const schema = a.schema({
 		.model({
 			userId: a.string().required(),
 			// userProfile: a.belongsTo('UserProfile', 'userId'),
-			score: a.string().required(),
+			score: a.float().required(),
 		})
 		.authorization((allow) => [allow.publicApiKey()]),
 });
