@@ -50,14 +50,14 @@ export default function AIPage() {
 			) : (
 				<>
 					<Heading level={2}>{data?.name}</Heading>
-					{/* <View as="ul">
+					<View as="ul">
 						{data?.ingredients?.map((ingredient) => (
 							<Text as="li" key={ingredient}>
 								{ingredient}
 							</Text>
 						))}
-					</View> */}
-					{/* <Text>{data?.instructions}</Text> */}
+					</View>
+					<Text>{data?.instructions}</Text>
 				</>
 			)}
 		</Flex>
