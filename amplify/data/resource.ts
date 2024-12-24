@@ -8,7 +8,7 @@ const schema = a.schema({
 		.authorization((allow) => [allow.publicApiKey()]),
 
 	generateRecipe: a.generation({
-		aiModel: a.ai.model('Claude 3 Sonnet'),
+		aiModel: a.ai.model('Claude 3.5 Sonnet v2'),
 		systemPrompt: "You are a helpful assistant that generates recipes.",
 
 		inferenceConfiguration: {
