@@ -7,6 +7,28 @@ const schema = a.schema({
 		})
 		.authorization((allow) => [allow.publicApiKey()]),
 
+	generateRecipe: a.generation({
+		aiModel: a.ai.model('Claude 3 Sonnet'),
+		systemPrompt: "You are a helpful assistant that generates recipes.",
+
+		inferenceConfiguration: {
+			maxTokens: 1000,
+			temperature: 0.5,
+			topP: 0.9,
+		}
+	})
+		.arguments({
+			description: a.string(),
+		})
+		.returns(
+			a.customType({
+				name: a.string(),
+				// ingredients: a.string().array(),
+				// instructions: a.string(),
+			})
+		)
+		.authorization((allow) => allow.authenticated()),
+
 	UserProfile: a
 		.model({
 			userId: a.string().required(),
@@ -32,7 +54,7 @@ export type Schema = ClientSchema<typeof schema>;
 export const data = defineData({
 	schema,
 	authorizationModes: {
-		defaultAuthorizationMode: "apiKey",
+		defaultAuthorizationMode: "userPool",
 		apiKeyAuthorizationMode: {
 			expiresInDays: 30,
 		},
