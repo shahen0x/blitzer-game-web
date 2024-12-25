@@ -9,6 +9,10 @@ interface ApplicationStore {
 
 	isLevelSelectorActive: boolean;
 	setIsLevelSelectorActive: (isLevelSelectorActive: boolean) => void;
+
+
+	isLevelGeneratorActive: boolean;
+	setIsLevelGeneratorActive: (isLevelGeneratorActive: boolean) => void;
 }
 
 export const useApplicationStore = create<ApplicationStore>((set) => ({
@@ -20,4 +24,7 @@ export const useApplicationStore = create<ApplicationStore>((set) => ({
 
 	isLevelSelectorActive: false,
 	setIsLevelSelectorActive: (isLevelSelectorActive) => set({ isLevelSelectorActive }),
+
+	isLevelGeneratorActive: false,
+	setIsLevelGeneratorActive: (isLevelGeneratorActive) => set({ isLevelGeneratorActive }),
 }));

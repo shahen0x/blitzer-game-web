@@ -11,6 +11,8 @@ import { Schema } from "@/amplify/data/resource";
 import LevelLoader from "./level-loader";
 import MorphingText from "../ui/morphing-text";
 import ShimmerButton from "../ui/shimmer-button";
+import { useAiLevelStore } from "@/store/use-ai-level-store";
+import { useApplicationStore } from "@/store/use-application-store";
 
 const client = generateClient<Schema>({ authMode: "userPool" });
 const { useAIConversation, useAIGeneration } = createAIHooks(client);
@@ -23,7 +25,7 @@ const orbitron = Orbitron({
 
 interface LevelGeneratorProps {
 	isGeneratorActive: boolean;
-	setIsGeneratorActive: Dispatch<SetStateAction<boolean>>
+	setIsGeneratorActive: Dispatch<SetStateAction<boolean>>;
 }
 
 
@@ -40,17 +42,17 @@ enum GenerationStep {
 }
 
 
-const initialGrid = [
-	[0, 0, 0, 2, 4, 1, 0, 0, 0, 6, 2, 0, 0, 0, 1, 5, 1, 0, 2, 2],
-	[0, 1, 0, 1, 0, 2, 3, 1, 0, 3, 0, 0, 2, 1, 2, 0, 1, 2, 1, 0],
-	[0, 1, 0, 0, 0, 0, 0, 1, 4, 1, 0, 0, 1, 0, 0, 0, 0, 5, 0, 0],
-	[0, 1, 4, 1, 1, 0, 0, 0, 0, 2, 4, 1, 5, 0, 1, 3, 1, 2, 6, 0],
-	[1, 7, 0, 0, 5, 1, 3, 6, 0, 0, 0, 0, 1, 4, 2, 0, 0, 0, 2, 1],
-	[0, 0, 0, 0, 0, 0, 1, 5, 1, 5, 1, 0, 0, 0, 1, 3, 1, 0, 0, 0],
-	[0, 1, 4, 2, 0, 0, 0, 0, 2, 0, 1, 3, 1, 0, 0, 0, 2, 1, 0, 2],
-	[0, 0, 0, 3, 1, 2, 1, 0, 4, 0, 0, 0, 2, 4, 1, 0, 0, 5, 1, 1],
-	[0, 0, 0, 1, 0, 0, 2, 5, 6, 3, 2, 0, 0, 0, 2, 1, 0, 0, 2, 0]
-]
+// const initialGrid = [
+// 	[0, 0, 0, 2, 4, 1, 0, 0, 0, 6, 2, 0, 0, 0, 1, 5, 1, 0, 2, 2],
+// 	[0, 1, 0, 1, 0, 2, 3, 1, 0, 3, 0, 0, 2, 1, 2, 0, 1, 2, 1, 0],
+// 	[0, 1, 0, 0, 0, 0, 0, 1, 4, 1, 0, 0, 1, 0, 0, 0, 0, 5, 0, 0],
+// 	[0, 1, 4, 1, 1, 0, 0, 0, 0, 2, 4, 1, 5, 0, 1, 3, 1, 2, 6, 0],
+// 	[1, 7, 0, 0, 5, 1, 3, 6, 0, 0, 0, 0, 1, 4, 2, 0, 0, 0, 2, 1],
+// 	[0, 0, 0, 0, 0, 0, 1, 5, 1, 5, 1, 0, 0, 0, 1, 3, 1, 0, 0, 0],
+// 	[0, 1, 4, 2, 0, 0, 0, 0, 2, 0, 1, 3, 1, 0, 0, 0, 2, 1, 0, 2],
+// 	[0, 0, 0, 3, 1, 2, 1, 0, 4, 0, 0, 0, 2, 4, 1, 0, 0, 5, 1, 1],
+// 	[0, 0, 0, 1, 0, 0, 2, 5, 6, 3, 2, 0, 0, 0, 2, 1, 0, 0, 2, 0]
+// ]
 
 
 const convertToNumberArray = (input: string): number[][] => {
@@ -75,23 +77,31 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 	setIsGeneratorActive,
 }) => {
 
+	const { isLevelSelectorActive, setIsLevelSelectorActive } = useApplicationStore();
+	const { generatedLevel, setGeneratedLevel, setTriggerAiLevelMode } = useAiLevelStore();
 	const [generationPhase, setGenerationPhase] = useState(GenerationStep.Generating);
-	const [{ data, isLoading, hasError, messages }, generateLevels] =
-		useAIGeneration("GenerateLevels");
+	const [{ data, isLoading, hasError, messages }, generateLevels] = useAIGeneration("GenerateLevels");
+
 
 	useEffect(() => {
 		console.log("Generation started")
 		if (generationPhase === GenerationStep.Generating) {
 			generateLevels({ instructions: "generate new level" });
-
 		}
 	}, [isGeneratorActive]);
 
 	useEffect(() => {
-		console.log("Generation finished")
-		if (data) setGenerationPhase(GenerationStep.Generated);
-		console.log(data);
+		if (data) {
+			setGenerationPhase(GenerationStep.Generated);
+			setGeneratedLevel(convertToNumberArray(data));
+		};
 	}, [data]);
+
+	const handlePlayLevel = () => {
+		setIsGeneratorActive(false);
+		setIsLevelSelectorActive(false);
+		setTriggerAiLevelMode(true);
+	}
 
 	return (
 		<div className="h-full w-full flex flex-col justify-center items-center space-y-10">
@@ -109,7 +119,7 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 					<h2 className={`${orbitron.className} text-3xl`}>Level Generated!</h2>
 					{/* <LevelPreview animate={true} initialGrid={initialGrid} /> */}
 					<LevelPreview animate={true} initialGrid={convertToNumberArray(data)} />
-					<ShimmerButton className="shadow-2xl" shimmerColor="#00F6FF">
+					<ShimmerButton className="shadow-2xl" shimmerColor="#00F6FF" onClick={handlePlayLevel}>
 						<span className={`${orbitron.className} whitespace-pre-wrap text-center text-sm font-medium leading-none tracking-wider text-[#00F6FF] dark:from-white dark:to-slate-900/10 lg:text-lg`}>
 							Play Level
 						</span>

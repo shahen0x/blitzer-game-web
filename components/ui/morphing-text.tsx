@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
 const morphTime = 1.5;
-const cooldownTime = 1;
+const cooldownTime = 2;
 
 const useMorphingText = (texts: string[]) => {
   const textIndexRef = useRef(0);
@@ -129,7 +129,7 @@ const SvgFilters: React.FC = () => (
 const MorphingText: React.FC<MorphingTextProps> = ({ texts, className }) => (
   <div
     className={cn(
-      "relative mx-auto h-16 w-full max-w-screen-md text-center font-sans text-[40pt] font-bold leading-none [filter:url(#threshold)_blur(0.6px)] md:h-24 lg:text-[6rem]",
+      "relative mx-auto h-16 w-full max-w-screen-md text-center font-sans text-[40pt] font-bold leading-tight tracking-wide [filter:url(#threshold)_blur(0.6px)] md:h-10 lg:text-[2.4rem]",
       className,
     )}
   >

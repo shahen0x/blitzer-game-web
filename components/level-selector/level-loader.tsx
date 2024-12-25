@@ -5,7 +5,7 @@ const LevelLoader: React.FC = () => {
 
 	return (
 		<div>
-			<div className="w-max mx-auto bg-white/5 p-4 rounded-2xl">
+			<div className="w-max mx-auto bg-black p-4 rounded-2xl">
 				{Array.from({ length: gridSize.rows }).map((_, rowIndex) => (
 					<div key={rowIndex} className="flex">
 						{Array.from({ length: gridSize.cols }).map((_, cellIndex) => (
