@@ -1,12 +1,7 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
+import { levelGeneratorPrompt } from "./prompt";
 
 const schema = a.schema({
-	Todo: a
-		.model({
-			content: a.string(),
-		})
-		.authorization((allow) => [allow.authenticated()]),
-
 	generateRecipe: a.generation({
 		aiModel: a.ai.model('Claude 3.5 Sonnet v2'),
 		systemPrompt: "You are a helpful assistant that generates recipes.",
@@ -28,6 +23,30 @@ const schema = a.schema({
 			})
 		)
 		.authorization((allow) => allow.authenticated()),
+
+	GenerateLevels: a.generation({
+		aiModel: a.ai.model('Claude 3.5 Sonnet v2'),
+		systemPrompt: levelGeneratorPrompt,
+	})
+		.arguments({
+			instructions: a.string(),
+		})
+		.returns(
+			a.string()
+		)
+		.authorization((allow) => allow.authenticated()),
+
+	AiLevel: a.model({
+		grid: a.string(),
+		generatedBy: a.string(),
+	})
+		.authorization((allow) => [allow.authenticated().to(['create', 'read'])]),
+
+	Todo: a
+		.model({
+			content: a.string(),
+		})
+		.authorization((allow) => [allow.authenticated()]),
 
 	UserProfile: a
 		.model({

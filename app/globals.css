@@ -64,3 +64,17 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+
+@keyframes pulseAnimation {
+  0% {
+    opacity: 0.1; /* Start with low opacity */
+  }
+  50% {
+    opacity: 1; /* Fade to full opacity */
+  }
+  100% {
+    opacity: 0.1; /* Fade back down to low opacity */
+  }
+}
