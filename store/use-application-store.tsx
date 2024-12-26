@@ -14,6 +14,9 @@ interface ApplicationStore {
 	submitDialogActive: boolean;
 	setSubmitDialogActive: (submitDialogActive: boolean) => void;
 
+	leaderboardDialogActive: boolean;
+	setLeaderboardDialogActive: (leaderboardDialogActive: boolean) => void;
+
 
 
 	isLevelSelectorActive: boolean;
@@ -35,6 +38,9 @@ export const useApplicationStore = create<ApplicationStore>((set) => ({
 
 	submitDialogActive: false,
 	setSubmitDialogActive: (submitDialogActive) => set({ submitDialogActive }),
+
+	leaderboardDialogActive: false,
+	setLeaderboardDialogActive: (leaderboardDialogActive) => set({ leaderboardDialogActive }),
 
 
 	isLevelSelectorActive: false,

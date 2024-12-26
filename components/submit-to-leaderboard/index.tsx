@@ -49,6 +49,7 @@ const SubmitToLeaderboard: FC<SubmitToLeaderboardProps> = ({
 		>
 			<h3 className={`${orbitron.className} text-2xl text-center`}>Submitting To <br /> Leaderboard</h3>
 			<Ripple />
+			<button onClick={() => setSubmitDialogActive(false)}>Close</button>
 			{/* <div className="absolute w-full h-full top-0 left-0 bg-green-500/10 " /> */}
 		</Dialog>
 	)

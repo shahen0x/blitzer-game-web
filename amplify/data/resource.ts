@@ -62,8 +62,9 @@ const schema = a.schema({
 	Leaderboard: a
 		.model({
 			userId: a.string().required(),
+			mode: a.enum(["normal", "bossFight"]),
 			// userProfile: a.belongsTo('UserProfile', 'userId'),
-			score: a.float().required(),
+			time: a.float().required(),
 		})
 		.authorization((allow) => [allow.authenticated()]),
 });
