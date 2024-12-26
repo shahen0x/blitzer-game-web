@@ -7,12 +7,20 @@ interface ApplicationStore {
 	isMainMenuActive: boolean;
 	setIsMainMenuActive: (isMainMenuActive: boolean) => void;
 
+	isLevelGeneratorActive: boolean;
+	setIsLevelGeneratorActive: (isLevelGeneratorActive: boolean) => void;
+
+
+	submitDialogActive: boolean;
+	setSubmitDialogActive: (submitDialogActive: boolean) => void;
+
+
+
 	isLevelSelectorActive: boolean;
 	setIsLevelSelectorActive: (isLevelSelectorActive: boolean) => void;
 
 
-	isLevelGeneratorActive: boolean;
-	setIsLevelGeneratorActive: (isLevelGeneratorActive: boolean) => void;
+
 }
 
 export const useApplicationStore = create<ApplicationStore>((set) => ({
@@ -22,9 +30,15 @@ export const useApplicationStore = create<ApplicationStore>((set) => ({
 	isMainMenuActive: false,
 	setIsMainMenuActive: (isMainMenuActive) => set({ isMainMenuActive }),
 
+	isLevelGeneratorActive: false,
+	setIsLevelGeneratorActive: (isLevelGeneratorActive) => set({ isLevelGeneratorActive }),
+
+	submitDialogActive: false,
+	setSubmitDialogActive: (submitDialogActive) => set({ submitDialogActive }),
+
+
 	isLevelSelectorActive: false,
 	setIsLevelSelectorActive: (isLevelSelectorActive) => set({ isLevelSelectorActive }),
 
-	isLevelGeneratorActive: false,
-	setIsLevelGeneratorActive: (isLevelGeneratorActive) => set({ isLevelGeneratorActive }),
+
 }));
