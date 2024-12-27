@@ -1,60 +1,110 @@
+/**
+ * LEADERBOARD COMPONENT
+ * This is a basic implementation for the hackathon,
+ * in a real world situation we would work on making 
+ * the leaderboard more efficient with caching and pagination.
+ * 
+ */
+
 "use client";
 
-import { FC } from "react";
-import Dialog from "../ui/dialog";
-import { StarsBackground } from "../background/stars";
+import { useEffect, useState } from "react";
 import { useApplicationStore } from "@/store/use-application-store";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+
+import { Schema } from "@/amplify/data/resource";
+import { client } from "../amplify/amplify-client-config";
+import { formatTime } from "@/lib/format-numbers";
+
+import Dialog from "../ui/dialog";
 import { Button } from "../ui/button";
-import { ChevronLeft } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
+import { StarsBackground } from "../background/stars";
+
+import { ChevronLeft } from "lucide-react";
 
 
+type ActiveTab = "normal" | "bossFight";
 
-interface LeaderboardProps {
 
-}
-
-const Leaderboard: FC<LeaderboardProps> = () => {
+const Leaderboard = () => {
 
 	const { leaderboardDialogActive, setLeaderboardDialogActive } = useApplicationStore();
+
+	const [activeTab, setActiveTab] = useState<ActiveTab>("normal");
+	const [leaderboard, setLeaderboard] = useState<Array<Schema["Leaderboard"]["type"]>>([]);
+
+
+	// COMMON STYLES
+	//
+	const styles = {
+		button: `py-1 px-3 rounded-full text-sm font-semibold text-muted-foreground`,
+		activeButton: `bg-primary !text-black`,
+	}
+
+
+	// FETCH LEADERBOARD
+	//
+	function fetchLeaderboard() {
+		client.models.Leaderboard.observeQuery().subscribe({
+			next: (data,) => {
+				const sorted = data.items.sort((a, b) => a.time - b.time);
+				setLeaderboard([...sorted]);
+			},
+		});
+	}
+
+	// Fetch leaderboard on first load to better experience.
+	useEffect(() => {
+		fetchLeaderboard();
+	}, []);
+
+
 
 	return (
 		<Dialog
 			open={leaderboardDialogActive}
 			onOpenChange={setLeaderboardDialogActive}
-			className="max-w-xl min-h-[calc(100vh_-_10rem)]"
+			className="overflow-hidden max-w-xl h-[calc(100vh_-_10rem)]"
 		>
 			<StarsBackground className="absolute z-0" />
 
-			<div className="relative z-10 h-full">
-				<Tabs defaultValue="normal" className="h-full">
+			<div className="relative z-10">
 
-					<div className="mb-4 flex items-center">
-						<Button variant={"outline"} size={"icon"} className="mr-4" onClick={() => setLeaderboardDialogActive(false)}>
-							<ChevronLeft />
-						</Button>
-						<h3 className="font-orbitron text-2xl tracking-wider">Leaderboard</h3>
-						<TabsList className="ml-auto">
-							<TabsTrigger value="normal">Normal Mode</TabsTrigger>
-							<TabsTrigger value="boss">Boss Fight</TabsTrigger>
-						</TabsList>
+				{/* LEADERBOARD HEADER */}
+				<div className="mb-8 flex items-center">
+					<Button variant={"outline"} size={"icon"} className="mr-4" onClick={() => setLeaderboardDialogActive(false)}>
+						<ChevronLeft />
+					</Button>
+					<h3 className="font-orbitron text-2xl tracking-wider">Leaderboard</h3>
+					<div className="bg-secondary rounded-full p-1 ml-auto">
+						<button className={`${styles.button} ${activeTab === "normal" && styles.activeButton}`} onClick={() => setActiveTab("normal")}>Normal Mode</button>
+						<button className={`${styles.button} ${activeTab === "bossFight" && styles.activeButton}`} onClick={() => setActiveTab("bossFight")}>Boss Fight</button>
 					</div>
+				</div>
 
-					<TabsContent className="h-full" value="normal">
-						<ScrollArea className="h-[calc(100%_-_60px)] rounded-2xl border p-4">
-							Jokester began sneaking into the castle in the middle of the night and leaving
-							jokes all over the place: under the king's pillow, in his soup, even in the
-							royal toilet. The king was furious, but he couldn't seem to stop Jokester. And
-							then, one day, the people of the kingdom discovered that the jokes left by
-							Jokester were so funny that they couldn't help but laugh. And once they
-							started laughing, they couldn't stop.
-						</ScrollArea>
-					</TabsContent>
-					<TabsContent className="h-full" value="boss">Change your password here.</TabsContent>
-				</Tabs>
+				{/* LEADERBOARD TABLE HEAD */}
+				<div className="mb-4 px-4">
+					<div className="grid grid-cols-[4rem_1fr_6rem] text-sm text-muted-foreground border px-4 py-2 rounded-xl bg-secondary/20">
+						<div>Rank</div>
+						<div>Player</div>
+						<div className="text-right">Time</div>
+					</div>
+				</div>
+
+				{/* LEADERBOARD ENTRIES */}
+				<ScrollArea className="h-[calc(100vh_-_21rem)] px-4">
+					<div className="space-y-2">
+						{leaderboard.filter((item) => item.mode === activeTab).map((item, index) => (
+							<div key={index} className="grid grid-cols-[4rem_1fr_6rem] items-center border px-4 py-2 rounded-xl text-sm">
+								<div>#{index + 1}</div>
+								<div>{item.username}</div>
+								<div className="text-right">{formatTime(item.time)}</div>
+							</div>
+						))}
+					</div>
+				</ScrollArea>
+
 			</div>
-
 		</Dialog>
 	)
 }

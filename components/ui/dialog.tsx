@@ -46,9 +46,7 @@ const Dialog: FC<DialogProps> = ({ className, open, onOpenChange, children }) =>
 						<span className="sr-only">Close</span>
 					</DialogPrimitive.Close> */}
 
-					<div className="pt-0">
-						{children}
-					</div>
+					{children}
 
 				</DialogPrimitive.Content>
 			</DialogPrimitive.Portal>

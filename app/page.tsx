@@ -13,6 +13,8 @@ import { useAiLevelStore } from "@/store/use-ai-level-store";
 import LevelGenerator from "@/components/level-generator";
 import SubmitToLeaderboard from "@/components/submit-to-leaderboard";
 import Leaderboard from "@/components/leaderboard";
+import { useUserStore } from "@/store/use-user-store";
+import { fetchUserAttributes, FetchUserAttributesOutput } from 'aws-amplify/auth';
 
 export default function App() {
 
@@ -20,6 +22,9 @@ export default function App() {
 	const { setContainerRef } = useRefStore();
 
 	const {
+		gameModeActive,
+		setGameModeActive,
+
 		setIsUnityLoaded,
 		setIsMainMenuActive,
 		setSubmitDialogActive,
@@ -29,6 +34,11 @@ export default function App() {
 		setIsLevelGeneratorActive
 	} = useApplicationStore();
 	const { generatedLevel, triggerAiLevelMode } = useAiLevelStore();
+
+
+	// SET USER DATA
+	//
+
 
 
 	// UNITY CONTEXT
@@ -72,7 +82,8 @@ export default function App() {
 	// HANDLE MAIN MENU STATE
 	// Receives event from Unity to activate the main menu when the game is loaded
 	const handleSetMainMain = useCallback(() => {
-		setIsMainMenuActive(true)
+		setIsMainMenuActive(true);
+		setGameModeActive('none');
 	}, []);
 
 	useEffect(() => {
@@ -86,11 +97,13 @@ export default function App() {
 	// Sends event to Unity to start a standard game
 	function handleStartNormalMode() {
 		setIsMainMenuActive(false);
+		setGameModeActive('normal');
 		sendMessage("MainMenuManager", "StartNormalMode");
 	}
 
 	const handleStartBossFightMode = () => {
 		setIsMainMenuActive(false);
+		setGameModeActive('bossFight');
 		sendMessage("MainMenuManager", "StartBossFight");
 	}
 

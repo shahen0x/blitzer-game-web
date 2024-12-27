@@ -1,11 +1,16 @@
 import { create } from 'zustand';
 
+export type GameMode = 'none' | 'normal' | 'ai' | 'bossFight';
+
 interface ApplicationStore {
 	isUnityLoaded: boolean;
 	setIsUnityLoaded: (isUnityLoaded: boolean) => void;
 
 	isMainMenuActive: boolean;
 	setIsMainMenuActive: (isMainMenuActive: boolean) => void;
+
+	gameModeActive: GameMode;
+	setGameModeActive: (gameModeActive: GameMode) => void;
 
 	isLevelGeneratorActive: boolean;
 	setIsLevelGeneratorActive: (isLevelGeneratorActive: boolean) => void;
@@ -32,6 +37,10 @@ export const useApplicationStore = create<ApplicationStore>((set) => ({
 
 	isMainMenuActive: false,
 	setIsMainMenuActive: (isMainMenuActive) => set({ isMainMenuActive }),
+
+	// Used for setting which game mode is active
+	gameModeActive: 'none',
+	setGameModeActive: (gameModeActive) => set({ gameModeActive }),
 
 	isLevelGeneratorActive: false,
 	setIsLevelGeneratorActive: (isLevelGeneratorActive) => set({ isLevelGeneratorActive }),

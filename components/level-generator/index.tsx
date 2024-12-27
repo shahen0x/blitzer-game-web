@@ -55,10 +55,15 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 	children,
 }) => {
 
-	const { setIsMainMenuActive, isLevelGeneratorActive, setIsLevelGeneratorActive } = useApplicationStore();
+	const {
+		setIsMainMenuActive,
+		setGameModeActive,
+		isLevelGeneratorActive,
+		setIsLevelGeneratorActive
+	} = useApplicationStore();
+
 	const [generationStep, setGenerationStep] = useState(GenerationStep.StartScreen);
 	const [{ data, isLoading, hasError, messages }, generateLevels] = useAIGeneration("GenerateLevels");
-	console.log(data);
 
 	function handleStartChallenge() {
 		setGenerationStep(GenerationStep.Generating);
@@ -82,6 +87,7 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 		const generatedLevel = convertToNumberArray(data);
 		setIsLevelGeneratorActive(false);
 		setIsMainMenuActive(false);
+		setGameModeActive('ai');
 		sendMessage("MainMenuManager", "StartAILevelMode", JSON.stringify({ grid: generatedLevel }));
 		setGenerationStep(GenerationStep.StartScreen);
 	}
