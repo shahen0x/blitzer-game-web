@@ -25,6 +25,7 @@ const schema = a.schema({
 	AiLevel: a.model({
 		grid: a.string(),
 		generatedBy: a.string(),
+		cover: a.string(),
 	})
 		.authorization((allow) => [allow.authenticated().to(['create', 'read'])]),
 

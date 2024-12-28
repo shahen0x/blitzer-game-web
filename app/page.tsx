@@ -13,6 +13,7 @@ import LevelGenerator from "@/components/level-generator";
 import SubmitToLeaderboard from "@/components/submit-to-leaderboard";
 import Leaderboard from "@/components/leaderboard";
 import LevelBrowser from "@/components/level-browser";
+import LevelUploader from "@/components/level-uploader";
 
 export default function App() {
 
@@ -110,18 +111,16 @@ export default function App() {
 	}
 
 
-	function handleClickTakeScreenshot() {
-		const dataUrl = takeScreenshot("image/jpg", 0.5);
-		if (!dataUrl) return;
-		navigator.clipboard.writeText(dataUrl);
-	}
+
+
+
 
 	return (
 		<div className="w-full h-full" ref={containerRef}>
 
 			<UnityLoader isLoaded={isLoaded} loadingProgression={loadingProgression} />
 			<Unity id="game" unityProvider={unityProvider} className="fixed top-0 left-0 z-0 aspect-video w-full h-screen" />
-			<button onClick={handleClickTakeScreenshot} className="absolute z-50 bottom-4 right-4">Take Screenshot</button>
+			{/* <button onClick={handleClickTakeScreenshot} className="absolute z-50 bottom-4 right-4">Take Screenshot</button> */}
 
 			<MainMenu>
 				<MainMenuButton onClick={handleStartNormalMode} title="Standard" description="Play 3 levels and beat the final boss." />
@@ -133,9 +132,10 @@ export default function App() {
 			</MainMenu>
 
 
-			<LevelSelector />
+			{/* <LevelSelector /> */}
 			<LevelGenerator sendMessage={sendMessage}>Test</LevelGenerator>
 			<LevelBrowser />
+			<LevelUploader addEventListener={addEventListener} removeEventListener={removeEventListener} takeScreenshot={takeScreenshot} />
 			<SubmitToLeaderboard addEventListener={addEventListener} removeEventListener={removeEventListener} />
 			<Leaderboard />
 
