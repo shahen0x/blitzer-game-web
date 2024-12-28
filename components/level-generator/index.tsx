@@ -28,8 +28,7 @@ const orbitron = Orbitron({
 
 
 interface LevelGeneratorProps {
-	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void
-	children: React.ReactNode;
+	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void;
 }
 
 
@@ -51,8 +50,7 @@ const { useAIConversation, useAIGeneration } = createAIHooks(client);
 
 
 const LevelGenerator: FC<LevelGeneratorProps> = ({
-	sendMessage,
-	children,
+	sendMessage
 }) => {
 
 	const {
@@ -64,10 +62,17 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 
 	const [generationStep, setGenerationStep] = useState(GenerationStep.StartScreen);
 	const [{ data, isLoading, hasError, messages }, generateLevels] = useAIGeneration("GenerateLevels");
+	console.log(messages);
 
-	function handleStartChallenge() {
+	async function handleStartChallenge() {
 		setGenerationStep(GenerationStep.Generating);
-		generateLevels({ instructions: "generate new level" });
+		try {
+			generateLevels({ instructions: "generate new level" })
+		} catch (error) {
+			console.log(error);
+
+		}
+
 	}
 
 
