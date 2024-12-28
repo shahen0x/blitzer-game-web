@@ -21,8 +21,8 @@ const LevelSelector: FC<LevelSelectorProps> = () => {
 
 	return (
 		<Dialog
-			open={!isGeneratorActive ? isLevelSelectorActive : true}
-			onOpenChange={!isGeneratorActive ? setIsLevelSelectorActive : () => { }}
+			open={isGeneratorActive}
+			onOpenChange={setIsLevelSelectorActive}
 			title="AI Levels / Generator"
 			className="max-w-5xl min-h-[calc(100vh_-_10rem)]"
 		>
