@@ -15,12 +15,19 @@ interface ApplicationStore {
 	isLevelGeneratorActive: boolean;
 	setIsLevelGeneratorActive: (isLevelGeneratorActive: boolean) => void;
 
+	levelBrowserActive: boolean;
+	setLevelBrowserActive: (levelBrowserActive: boolean) => void;
+
 
 	submitDialogActive: boolean;
 	setSubmitDialogActive: (submitDialogActive: boolean) => void;
 
 	leaderboardDialogActive: boolean;
 	setLeaderboardDialogActive: (leaderboardDialogActive: boolean) => void;
+
+
+
+
 
 
 
@@ -44,6 +51,9 @@ export const useApplicationStore = create<ApplicationStore>((set) => ({
 
 	isLevelGeneratorActive: false,
 	setIsLevelGeneratorActive: (isLevelGeneratorActive) => set({ isLevelGeneratorActive }),
+
+	levelBrowserActive: false,
+	setLevelBrowserActive: (levelBrowserActive) => set({ levelBrowserActive }),
 
 	submitDialogActive: false,
 	setSubmitDialogActive: (submitDialogActive) => set({ submitDialogActive }),
