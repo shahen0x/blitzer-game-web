@@ -8,7 +8,6 @@ import { Unity, useUnityContext } from "react-unity-webgl";
 import MainMenu from "@/components/main-menu";
 import MainMenuButton from "@/components/main-menu/main-menu-btn";
 import { useRefStore } from "@/store/use-ref-store";
-import LevelSelector from "@/components/level-selector";
 import LevelGenerator from "@/components/level-generator";
 import SubmitToLeaderboard from "@/components/submit-to-leaderboard";
 import Leaderboard from "@/components/leaderboard";
@@ -21,15 +20,12 @@ export default function App() {
 	const { setContainerRef } = useRefStore();
 
 	const {
-		gameModeActive,
 		setGameModeActive,
 
 		setIsUnityLoaded,
 		setIsMainMenuActive,
-		setSubmitDialogActive,
 		setLeaderboardDialogActive,
 
-		setIsLevelSelectorActive,
 		setIsLevelGeneratorActive,
 		setLevelBrowserActive
 	} = useApplicationStore();
@@ -132,7 +128,6 @@ export default function App() {
 			</MainMenu>
 
 
-			{/* <LevelSelector /> */}
 			<LevelGenerator sendMessage={sendMessage}>Test</LevelGenerator>
 			<LevelBrowser />
 			<LevelUploader addEventListener={addEventListener} removeEventListener={removeEventListener} takeScreenshot={takeScreenshot} />
