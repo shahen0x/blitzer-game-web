@@ -204,7 +204,6 @@ function NavigableMenu<T extends MenuItem>({
 			tabIndex={0}
 			onClick={handleContainerClick}
 		>
-			{/* <div className={getLayoutClasses()}> */}
 			{items.map((item, index) => (
 				<div
 					key={item.id}
@@ -225,7 +224,6 @@ function NavigableMenu<T extends MenuItem>({
 					})}
 				</div>
 			))}
-			{/* </div> */}
 		</div>
 	);
 }

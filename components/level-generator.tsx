@@ -2,20 +2,19 @@
 import { FC, useEffect, useState } from "react";
 
 import { useApplicationStore } from "@/store/use-application-store";
-import Dialog from "../ui/dialog";
-import { Button } from "../ui/button";
-import { StarsBackground } from "../background/stars";
-import MorphingText from "../ui/morphing-text";
+import Dialog from "./ui/dialog";
+import { Button } from "./ui/button";
+import { StarsBackground } from "./background/stars";
+import MorphingText from "./ui/morphing-text";
 
-import LevelLoader from "../level-selector/level-loader";
+import LevelLoader from "./level-selector/level-loader";
 
-import { creationTexts, startScreenTexts } from "./ai-texts";
 import { Orbitron } from "next/font/google";
 
 import { generateClient } from "aws-amplify/api";
 import { createAIHooks } from "@aws-amplify/ui-react-ai";
 import { Schema } from "@/amplify/data/resource";
-import LevelPreview from "../level-selector/level-preview";
+import LevelPreview from "./level-selector/level-preview";
 import { convertToNumberArray } from "@/lib/convert-to-number-array";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
 
@@ -26,11 +25,37 @@ const orbitron = Orbitron({
 });
 
 
+const startScreenTexts = [
+	"Welcome!",
+	"The AI overlord shapes the world.",
+	"Are you prepared?",
+	"It builds, you survive.",
+	"Adapt or be erased.",
+	"Each move shapes your fate.",
+	"It evolves, do you?",
+	"The world bends to its will.",
+	"Face what it creates.",
+	"You’re a pawn in its game.",
+	"Survive its design."
+];
+
+const creationTexts = [
+	"Shaping your challenge...",
+	"Designing the impossible...",
+	"Building the unknown...",
+	"It’s coming together...",
+	"Crafting your path...",
+	"Reality is forming...",
+	"Piecing it all together...",
+	"Constructing your doom...",
+	"The world is taking shape...",
+	"Assembling the chaos..."
+];
+
 
 interface LevelGeneratorProps {
 	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void;
 }
-
 
 
 enum GenerationStep {
@@ -41,12 +66,9 @@ enum GenerationStep {
 }
 
 
-
-// INITIALIZE AWS AMPLIFY AI HOOKS
-//
+// Init Amplify AI hook
 const client = generateClient<Schema>({ authMode: "userPool" });
-const { useAIConversation, useAIGeneration } = createAIHooks(client);
-
+const { useAIGeneration } = createAIHooks(client);
 
 
 const LevelGenerator: FC<LevelGeneratorProps> = ({
@@ -54,15 +76,15 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 }) => {
 
 	const {
-		setIsMainMenuActive,
+		setMainMenuActive,
 		setGameModeActive,
 		isLevelGeneratorActive,
-		setIsLevelGeneratorActive
+		setIsLevelGeneratorActive,
+		setGeneratedLevelData
 	} = useApplicationStore();
 
 	const [generationStep, setGenerationStep] = useState(GenerationStep.StartScreen);
 	const [{ data, isLoading, hasError, messages }, generateLevels] = useAIGeneration("GenerateLevels");
-	console.log(messages);
 
 	async function handleStartChallenge() {
 		setGenerationStep(GenerationStep.Generating);
@@ -90,8 +112,9 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 		// console.log(JSON.stringify({ grid: aiLevelGenerated }));
 		if (!data) return;
 		const generatedLevel = convertToNumberArray(data);
+		setGeneratedLevelData(generatedLevel);
 		setIsLevelGeneratorActive(false);
-		setIsMainMenuActive(false);
+		setMainMenuActive(false);
 		setGameModeActive('ai');
 		sendMessage("MainMenuManager", "StartAILevelMode", JSON.stringify({ grid: generatedLevel }));
 		setGenerationStep(GenerationStep.StartScreen);

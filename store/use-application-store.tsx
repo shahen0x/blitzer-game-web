@@ -13,6 +13,9 @@ interface ApplicationStore {
 	isLevelGeneratorActive: boolean;
 	setIsLevelGeneratorActive: (isLevelGeneratorActive: boolean) => void;
 
+	generatedLevelData: number[][] | undefined;
+	setGeneratedLevelData: (generatedLevelData: number[][] | undefined) => void;
+
 	levelBrowserActive: boolean;
 	setLevelBrowserActive: (levelBrowserActive: boolean) => void;
 
@@ -35,6 +38,9 @@ export const useApplicationStore = create<ApplicationStore>((set) => ({
 
 	isLevelGeneratorActive: false,
 	setIsLevelGeneratorActive: (isLevelGeneratorActive) => set({ isLevelGeneratorActive }),
+
+	generatedLevelData: undefined,
+	setGeneratedLevelData: (generatedLevelData) => set({ generatedLevelData }),
 
 	levelBrowserActive: false,
 	setLevelBrowserActive: (levelBrowserActive) => set({ levelBrowserActive }),

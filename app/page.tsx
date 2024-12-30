@@ -7,7 +7,6 @@ import { Unity, useUnityContext } from "react-unity-webgl";
 
 import UnityLoader from "@/components/unity/unity-loader";
 import MainMenu from "@/components/main-menu";
-import MainMenuButton from "@/components/main-menu-btn";
 import LevelGenerator from "@/components/level-generator";
 import SubmitToLeaderboard from "@/components/submit-to-leaderboard";
 import Leaderboard from "@/components/leaderboard";
@@ -75,6 +74,7 @@ export default function App() {
 			/>
 
 			<LevelGenerator sendMessage={sendMessage} />
+
 			<LevelBrowser />
 			<LevelUploader addEventListener={addEventListener} removeEventListener={removeEventListener} takeScreenshot={takeScreenshot} />
 
