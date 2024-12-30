@@ -4,8 +4,8 @@ export type GameMode = 'none' | 'normal' | 'ai' | 'bossFight';
 
 interface ApplicationStore {
 
-	isMainMenuActive: boolean;
-	setIsMainMenuActive: (isMainMenuActive: boolean) => void;
+	mainMenuActive: boolean;
+	setMainMenuActive: (mainMenuActive: boolean) => void;
 
 	gameModeActive: GameMode;
 	setGameModeActive: (gameModeActive: GameMode) => void;
@@ -27,8 +27,8 @@ interface ApplicationStore {
 
 export const useApplicationStore = create<ApplicationStore>((set) => ({
 
-	isMainMenuActive: false,
-	setIsMainMenuActive: (isMainMenuActive) => set({ isMainMenuActive }),
+	mainMenuActive: false,
+	setMainMenuActive: (mainMenuActive) => set({ mainMenuActive }),
 
 	gameModeActive: 'none',
 	setGameModeActive: (gameModeActive) => set({ gameModeActive }),
