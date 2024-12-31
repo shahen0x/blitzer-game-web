@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRefStore } from "@/store/use-ref-store";
 
 import { Unity, useUnityContext } from "react-unity-webgl";
@@ -12,11 +12,17 @@ import SubmitToLeaderboard from "@/components/submit-to-leaderboard";
 import Leaderboard from "@/components/leaderboard";
 import LevelBrowser from "@/components/level-browser";
 import LevelUploader from "@/components/level-uploader";
+import { client } from "@/components/amplify/amplify-client-config";
+import { Schema } from "@/amplify/data/resource";
+import { useDataStore } from "@/store/use-data-store";
+import { getUrl } from "aws-amplify/storage";
 
 export default function App() {
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { setContainerRef } = useRefStore();
+	const { levels, setLevels } = useDataStore();
+	console.log(levels);
 
 
 	// UNITY CONTEXT
@@ -50,6 +56,31 @@ export default function App() {
 	useEffect(() => {
 		setContainerRef(containerRef)
 	}, [setContainerRef]);
+
+
+
+	// Prefetch data for better user experience
+	async function fetchLevels() {
+		client.models.AiLevel.observeQuery().subscribe({
+			next: async (data) => {
+				const levelsWithCovers = await Promise.all(
+					data.items.map(async (level) => {
+						if (level.cover) {
+							const coverUrl = await getUrl({ path: level.cover });
+							return { ...level, coverImage: coverUrl.url.href };
+						}
+						return level;
+					})
+				)
+				setLevels(levelsWithCovers);
+			},
+		});
+	}
+
+	useEffect(() => {
+		console.log("⚠️ fetching levels")
+		fetchLevels();
+	}, []);
 
 
 
