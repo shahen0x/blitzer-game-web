@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRefStore } from "@/store/use-ref-store";
 
 import { Unity, useUnityContext } from "react-unity-webgl";
@@ -8,12 +8,11 @@ import { Unity, useUnityContext } from "react-unity-webgl";
 import UnityLoader from "@/components/unity/unity-loader";
 import MainMenu from "@/components/main-menu";
 import LevelGenerator from "@/components/level-generator";
-import SubmitToLeaderboard from "@/components/submit-to-leaderboard";
+import SubmitToLeaderboard from "@/components/leaderboard/submit";
 import Leaderboard from "@/components/leaderboard";
 import LevelBrowser from "@/components/level-browser";
-import LevelUploader from "@/components/level-uploader";
+import LevelUploader from "@/components/level-generator/level-uploader";
 import { client } from "@/components/amplify/amplify-client-config";
-import { Schema } from "@/amplify/data/resource";
 import { useDataStore } from "@/store/use-data-store";
 import { getUrl } from "aws-amplify/storage";
 

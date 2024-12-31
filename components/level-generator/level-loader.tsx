@@ -14,7 +14,7 @@ const LevelLoader: React.FC = () => {
 								className="w-8 h-8 flex items-center justify-center cursor-default bg-white/20 opacity-0"
 								style={{
 									animation: `pulseAnimation 1.5s ease-in-out infinite`,
-									animationDelay: `${Math.random() * 3}s`, // Random delay between 0 and 3 seconds
+									animationDelay: `${Math.random() * 3}s`,
 								}}
 							>
 								<span className="text-sm text-black">{/* Empty cell */}</span>

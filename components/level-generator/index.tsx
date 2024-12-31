@@ -2,19 +2,19 @@
 import { FC, useEffect, useState } from "react";
 
 import { useApplicationStore } from "@/store/use-application-store";
-import Dialog from "./ui/dialog";
-import { Button } from "./ui/button";
-import { StarsBackground } from "./background/stars";
-import MorphingText from "./ui/morphing-text";
+import Dialog from "../ui/dialog";
+import { Button } from "../ui/button";
+import { StarsBackground } from "../background/stars";
+import MorphingText from "../ui/morphing-text";
 
-import LevelLoader from "./level-selector/level-loader";
+import LevelLoader from "./level-loader";
 
 import { Orbitron } from "next/font/google";
 
 import { generateClient } from "aws-amplify/api";
 import { createAIHooks } from "@aws-amplify/ui-react-ai";
 import { Schema } from "@/amplify/data/resource";
-import LevelPreview from "./level-selector/level-preview";
+import LevelPreview from "./level-preview";
 import { convertToNumberArray } from "@/lib/convert-to-number-array";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
 
@@ -102,15 +102,12 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 	useEffect(() => {
 		if (data) {
 			setGenerationStep(GenerationStep.Generated);
-			// setGeneratedLevel(convertToNumberArray(data));
 		};
 	}, [data]);
 
 
 
 	const handleStartAILevelMode = () => {
-		// const aiLevelGenerated = [[0, 0, 0, 0, 2, 1, 4, 1, 0, 0, 0, 0, 2, 1, 5, 1, 0, 0, 0, 0], [0, 2, 4, 1, 3, 0, 0, 2, 1, 0, 0, 2, 0, 0, 0, 2, 1, 3, 2, 0], [0, 1, 0, 0, 1, 0, 0, 0, 5, 1, 4, 1, 0, 0, 0, 0, 0, 1, 7, 0], [0, 2, 1, 0, 2, 1, 3, 0, 0, 2, 0, 5, 1, 2, 1, 4, 0, 2, 0, 0], [1, 6, 2, 6, 1, 2, 1, 4, 1, 6, 2, 1, 2, 6, 1, 3, 1, 5, 2, 1], [0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0], [0, 2, 1, 4, 1, 3, 1, 5, 1, 2, 1, 3, 0, 0, 0, 2, 1, 4, 2, 0], [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 2, 1, 0, 0, 0, 0, 8, 0], [0, 0, 0, 0, 0, 2, 1, 5, 1, 0, 0, 0, 0, 2, 1, 3, 1, 2, 0, 0]];
-		// console.log(JSON.stringify({ grid: aiLevelGenerated }));
 		if (!data) return;
 		const generatedLevel = convertToNumberArray(data);
 		setGeneratedLevelData(generatedLevel);

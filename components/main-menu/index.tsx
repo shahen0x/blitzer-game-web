@@ -11,10 +11,10 @@ import { FC, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { useApplicationStore } from "@/store/use-application-store";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
-import { StarsBackground } from "./background/stars";
-import { Meteors } from "./background/meteors";
+import { StarsBackground } from "../background/stars";
+import { Meteors } from "../background/meteors";
 import MainMenuButton from "./main-menu-btn";
-import NavigableMenu, { MenuItem } from "./ui/navigable-menu";
+import NavigableMenu, { MenuItem } from "../ui/navigable-menu";
 
 interface MainMenuProps {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
