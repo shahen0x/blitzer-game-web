@@ -64,13 +64,19 @@ export default function App() {
 		client.models.AiLevel.observeQuery().subscribe({
 			next: async (data) => {
 				const levelsWithCovers = await Promise.all(
-					data.items.map(async (level) => {
-						if (level.cover) {
-							const coverUrl = await getUrl({ path: level.cover });
-							return { ...level, coverImage: coverUrl.url.href };
-						}
-						return level;
-					})
+					data.items
+						// Sort in descending order (newest first)
+						.sort((a, b) => {
+							return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+						})
+						// Map to add cover image URL from S3
+						.map(async (level) => {
+							if (level.cover) {
+								const coverUrl = await getUrl({ path: level.cover });
+								return { ...level, coverImage: coverUrl.url.href };
+							}
+							return level;
+						})
 				)
 				setLevels(levelsWithCovers);
 			},
@@ -104,10 +110,19 @@ export default function App() {
 				sendMessage={sendMessage}
 			/>
 
-			<LevelGenerator sendMessage={sendMessage} />
+			<LevelGenerator
+				sendMessage={sendMessage}
+			/>
 
-			<LevelBrowser />
-			<LevelUploader addEventListener={addEventListener} removeEventListener={removeEventListener} takeScreenshot={takeScreenshot} />
+			<LevelBrowser
+				sendMessage={sendMessage}
+			/>
+
+			<LevelUploader
+				addEventListener={addEventListener}
+				removeEventListener={removeEventListener}
+				takeScreenshot={takeScreenshot}
+			/>
 
 			<Leaderboard />
 			<SubmitToLeaderboard addEventListener={addEventListener} removeEventListener={removeEventListener} />

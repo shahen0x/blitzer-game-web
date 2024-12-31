@@ -80,7 +80,8 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 		setGameModeActive,
 		isLevelGeneratorActive,
 		setIsLevelGeneratorActive,
-		setGeneratedLevelData
+		setGeneratedLevelData,
+		setCustomGameLaunchedFrom
 	} = useApplicationStore();
 
 	const [generationStep, setGenerationStep] = useState(GenerationStep.StartScreen);
@@ -115,7 +116,8 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 		setGeneratedLevelData(generatedLevel);
 		setIsLevelGeneratorActive(false);
 		setMainMenuActive(false);
-		setGameModeActive('ai');
+		setGameModeActive('custom');
+		setCustomGameLaunchedFrom("ai-generator");
 		sendMessage("MainMenuManager", "StartAILevelMode", JSON.stringify({ grid: generatedLevel }));
 		setGenerationStep(GenerationStep.StartScreen);
 	}

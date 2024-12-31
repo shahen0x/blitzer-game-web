@@ -21,7 +21,7 @@ const LevelUploader: FC<LevelUploaderProps> = ({
 	takeScreenshot
 }) => {
 
-	const { gameModeActive, generatedLevelData } = useApplicationStore();
+	const { gameModeActive, generatedLevelData, customGameLaunchedFrom } = useApplicationStore();
 	const [username, setUsername] = useState<string | undefined>(undefined);
 
 
@@ -35,7 +35,9 @@ const LevelUploader: FC<LevelUploaderProps> = ({
 
 
 	const handleExecuteFromEvent = useCallback(() => {
-		if (gameModeActive === "normal") handleUploadLevel();
+		if (gameModeActive === "custom" && customGameLaunchedFrom === "ai-generator") {
+			handleUploadLevel();
+		}
 	}, [handleUploadLevel]);
 
 	useEffect(() => {
