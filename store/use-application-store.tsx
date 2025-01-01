@@ -35,6 +35,11 @@ interface ApplicationStore {
 	leaderboardDialogActive: boolean;
 	setLeaderboardDialogActive: (leaderboardDialogActive: boolean) => void;
 
+
+
+	inGamePauseActive: boolean;
+	setInGamePauseActive: (inGamePauseActive: boolean) => void;
+
 }
 
 export const useApplicationStore = create<ApplicationStore>((set) => ({
@@ -70,5 +75,8 @@ export const useApplicationStore = create<ApplicationStore>((set) => ({
 	leaderboardDialogActive: false,
 	setLeaderboardDialogActive: (leaderboardDialogActive) => set({ leaderboardDialogActive }),
 
+
+	inGamePauseActive: false,
+	setInGamePauseActive: (inGamePauseActive) => set({ inGamePauseActive }),
 
 }));

@@ -15,17 +15,18 @@ import LevelUploader from "@/components/level-generator/level-uploader";
 import { client } from "@/components/amplify/amplify-client-config";
 import { useDataStore } from "@/store/use-data-store";
 import { getUrl } from "aws-amplify/storage";
+import InGamePause from "@/components/in-game-pause";
 
 export default function App() {
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { setContainerRef } = useRefStore();
 	const { levels, setLevels } = useDataStore();
-	console.log(levels);
 
 
 	// UNITY CONTEXT
 	// Used for loading and interacting unity
+	const gameName = "b7";
 	const {
 		unityProvider,
 		isLoaded,
@@ -35,11 +36,11 @@ export default function App() {
 		sendMessage,
 		takeScreenshot
 	} = useUnityContext({
-		loaderUrl: "/game/Build/blitzer.loader.js",
-		dataUrl: "/game/Build/blitzer.data",
-		frameworkUrl: "/game/Build/blitzer.framework.js",
+		loaderUrl: `/game/Build/${gameName}.loader.js`,
+		dataUrl: `/game/Build/${gameName}.data`,
+		frameworkUrl: `/game/Build/${gameName}.framework.js`,
+		codeUrl: `/game/Build/${gameName}.wasm`,
 		streamingAssetsUrl: "/game/StreamingAssets",
-		codeUrl: "/game/Build/blitzer.wasm",
 		companyName: "AWS Hackathon",
 		productName: "Blitzer",
 		productVersion: "1",
@@ -125,6 +126,13 @@ export default function App() {
 
 			<Leaderboard />
 			<SubmitToLeaderboard addEventListener={addEventListener} removeEventListener={removeEventListener} />
+
+
+			<InGamePause
+				addEventListener={addEventListener}
+				removeEventListener={removeEventListener}
+				sendMessage={sendMessage}
+			/>
 
 		</div>
 	);

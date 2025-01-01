@@ -2,9 +2,9 @@
 
 import { ButtonHTMLAttributes, FC } from "react";
 import { MoveRight } from "lucide-react";
-import useSound from 'use-sound';
+// import useSound from 'use-sound';
 
-const SOUND_URL = '/sfx/ui-click.wav';
+// const SOUND_URL = '/sfx/ui-click.wav';
 
 
 interface MainMenuButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -15,13 +15,13 @@ interface MainMenuButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const MainMenuButton: FC<MainMenuButtonProps> = ({ onClick, title, description }) => {
 
-	const [play] = useSound(SOUND_URL, { volume: 1 });
+	// const [play] = useSound(SOUND_URL, { volume: 1 });
 
 	return (
 		<>
 			<button
 				onClick={onClick}
-				onMouseDown={() => play()}
+				// onMouseDown={() => play()}
 				className="group w-[22rem] py-3 px-4 rounded-2xl text-left transition-all border border-white/10 hover:border-primary bg-white/10 hover:bg-primary/5"
 			>
 				<div className={`flex items-center justify-between text-xl tracking-normal transition-all group-hover:text-primary group-hover:tracking-wider`}>
