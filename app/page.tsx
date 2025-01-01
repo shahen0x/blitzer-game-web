@@ -15,7 +15,8 @@ import LevelUploader from "@/components/level-generator/level-uploader";
 import { client } from "@/components/amplify/amplify-client-config";
 import { useDataStore } from "@/store/use-data-store";
 import { getUrl } from "aws-amplify/storage";
-import InGamePause from "@/components/in-game-pause";
+import MenuPause from "@/components/menu-pause";
+import MenuDeath from "@/components/menu-death";
 
 export default function App() {
 
@@ -128,7 +129,13 @@ export default function App() {
 			<SubmitToLeaderboard addEventListener={addEventListener} removeEventListener={removeEventListener} />
 
 
-			<InGamePause
+			<MenuPause
+				addEventListener={addEventListener}
+				removeEventListener={removeEventListener}
+				sendMessage={sendMessage}
+			/>
+
+			<MenuDeath
 				addEventListener={addEventListener}
 				removeEventListener={removeEventListener}
 				sendMessage={sendMessage}

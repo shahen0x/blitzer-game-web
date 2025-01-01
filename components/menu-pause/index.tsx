@@ -8,7 +8,7 @@ import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 
-interface InGamePauseProps {
+interface MenuPause {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
 	removeEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
 	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void;
@@ -22,13 +22,13 @@ enum ConfirmationAction {
 
 
 
-const InGamePause: FC<InGamePauseProps> = ({
+const MenuPause: FC<MenuPause> = ({
 	addEventListener,
 	removeEventListener,
 	sendMessage
 }) => {
 
-	const { inGamePauseActive, setInGamePauseActive, gameModeActive } = useApplicationStore();
+	const { menuPauseActive, setMenuPauseActive, gameModeActive } = useApplicationStore();
 	const [sfx, setSfx] = useState(true);
 	const [music, setMusic] = useState(true);
 	const [confirmationActive, setConfirmationActive] = useState(false);
@@ -36,7 +36,7 @@ const InGamePause: FC<InGamePauseProps> = ({
 
 
 	const handleSetPauseMenu = useCallback((sfxMute: any, musicMute: any) => {
-		setInGamePauseActive(true);
+		setMenuPauseActive(true);
 		sfxMute === 0 ? setSfx(true) : setSfx(false);
 		musicMute === 0 ? setMusic(true) : setMusic(false);
 	}, []);
@@ -49,7 +49,7 @@ const InGamePause: FC<InGamePauseProps> = ({
 
 
 	const handleUnpauseMenu = useCallback(() => {
-		setInGamePauseActive(false);
+		setMenuPauseActive(false);
 	}, []);
 
 	useEffect(() => {
@@ -59,7 +59,7 @@ const InGamePause: FC<InGamePauseProps> = ({
 
 
 	function handleClosePauseMenu() {
-		setInGamePauseActive(false);
+		setMenuPauseActive(false);
 		sendMessage("UICanvas", "TogglePauseGame")
 	}
 
@@ -96,7 +96,7 @@ const InGamePause: FC<InGamePauseProps> = ({
 			[ConfirmationAction.Exit]: () => sendMessage("UICanvas", "ExitToMainMenu")
 		};
 
-		setInGamePauseActive(false);
+		setMenuPauseActive(false);
 		actions[action]?.();
 
 		setTimeout(() => {
@@ -108,7 +108,7 @@ const InGamePause: FC<InGamePauseProps> = ({
 
 	return (
 		<Dialog
-			open={inGamePauseActive}
+			open={menuPauseActive}
 			onOpenChange={() => { }}
 			className="overflow-hidden max-w-xs"
 		>
@@ -176,4 +176,4 @@ const InGamePause: FC<InGamePauseProps> = ({
 	);
 }
 
-export default InGamePause;
+export default MenuPause;

@@ -37,8 +37,12 @@ interface ApplicationStore {
 
 
 
-	inGamePauseActive: boolean;
-	setInGamePauseActive: (inGamePauseActive: boolean) => void;
+	menuPauseActive: boolean;
+	setMenuPauseActive: (menuPauseActive: boolean) => void;
+
+
+	menuDeathActive: boolean;
+	setMenuDeathActive: (menuDeathActive: boolean) => void;
 
 }
 
@@ -76,7 +80,10 @@ export const useApplicationStore = create<ApplicationStore>((set) => ({
 	setLeaderboardDialogActive: (leaderboardDialogActive) => set({ leaderboardDialogActive }),
 
 
-	inGamePauseActive: false,
-	setInGamePauseActive: (inGamePauseActive) => set({ inGamePauseActive }),
+	menuPauseActive: false,
+	setMenuPauseActive: (menuPauseActive) => set({ menuPauseActive }),
+
+	menuDeathActive: false,
+	setMenuDeathActive: (menuDeathActive) => set({ menuDeathActive }),
 
 }));
