@@ -8,7 +8,7 @@ export default function AmplifyAuthProvider({
 	children: React.ReactNode;
 }) {
 	return (
-		<Authenticator signUpAttributes={["preferred_username"]}>
+		<Authenticator signUpAttributes={["preferred_username"]} className="relative z-50">
 			{children}
 		</Authenticator>
 	)
