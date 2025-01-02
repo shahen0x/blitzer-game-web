@@ -19,7 +19,7 @@ export default function RootLayout({
 }) {
 	return (
 		<html lang="en" className="dark" suppressHydrationWarning>
-			<body className={`${saira.className} overflow-hidden`}>
+			<body className={`${saira.className} overflow-hidden flex justify-center items-center`}>
 				<StarsBackground className="absolute top-0 left-0 z-0 w-full h-full" />
 				<ConfigureAmplifyClientSide />
 				<AmplifyAuthProvider>
