@@ -123,25 +123,12 @@ const MainMenu: FC<MainMenuProps> = ({
 	return (
 		<div className="fixed top-0 left-0 z-50 w-full h-full flex justify-center items-center bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#4F2C7D] via-[#200643] to-[#05001c]">
 
-			{/* <StarsBackground className="absolute z-20" /> */}
-			<div className="absolute top-0 right-0 z-20 w-full h-full -scale-x-100">
+			<StarsBackground className="absolute z-10" />
+			<div className="absolute top-0 right-0 w-full h-full -scale-x-100">
 				<Meteors number={20} />
 			</div>
 
-			{/* <div className="absolute top-0 left-0 z-20 opacity-50 w-full h-full bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#4F2C7D] via-[#200643] to-[#05001c]" /> */}
-
-			<Image
-				src="/bg.jpg"
-				width={2560}
-				height={1080}
-				quality={100}
-				priority
-				alt="logo"
-				className="absolute z-10 top-0 left-0 object-cover object-bottom w-full h-full"
-			/>
-			{/* <Image src="/logo.png" alt="logo" width={720} height={215} className="relative z-50 w-2/3 h-auto max-w-xl " priority /> */}
-
-			<div className="absolute top-0 left-20 w-1/4 h-full bg-background/90 z-30 px-6 flex flex-col justify-center items-center space-y-8">
+			<div className="flex flex-col justify-center items-center space-y-8">
 				<Image src="/logo.png" alt="logo" width={720} height={215} className="w-2/3 h-auto max-w-xl relative z-50" priority />
 
 				<MainMenuSection title="Normal Mode">
