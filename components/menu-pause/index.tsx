@@ -121,7 +121,7 @@ const MenuPause: FC<MenuPause> = ({
 					}
 					<span className="text-sm text-muted-foreground">
 						{!confirmationActive
-							? <>{gameModeActive === "normal" ? "Normal Mode" : gameModeActive === "bossFight" ? "Boss Fight" : "AI Generated Level"}</>
+							? <>{gameModeActive === "normal" ? "Normal Mode" : gameModeActive === "bossFight" ? "Boss Fight" : gameModeActive === "tutorial" ? "Tutorial" : "AI Generated Level"}</>
 							: <>{confirmationAction === "restart" ? "Restart Game" : "Exit to main menu"}</>
 						}
 					</span>

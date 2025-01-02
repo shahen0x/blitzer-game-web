@@ -92,7 +92,7 @@ export default function App() {
 
 
 	return (
-		<div className="w-full h-full" ref={containerRef}>
+		<main className="relative z-10 w-full h-screen flex justify-center items-center" ref={containerRef}>
 
 			<UnityLoader
 				isLoaded={isLoaded}
@@ -141,6 +141,6 @@ export default function App() {
 				sendMessage={sendMessage}
 			/>
 
-		</div>
+		</main>
 	);
 }

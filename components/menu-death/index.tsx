@@ -54,7 +54,7 @@ const MenuDeath: FC<MenuDeathProps> = ({
 				</div>
 
 				<div className="space-y-3 outline-none">
-					<Button onClick={handleRestartGame} variant={"secondary"} className="w-full" tabIndex={-1}>Restart</Button>
+					<Button onClick={handleRestartGame} variant={"secondary"} className="w-full" tabIndex={-1}>Play Again</Button>
 					<Button onClick={handleExitGame} variant={"secondary"} className="w-full" tabIndex={-1}>Exit to Main Menu</Button>
 				</div>
 			</div>

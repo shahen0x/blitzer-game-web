@@ -3,6 +3,7 @@ import { Saira } from "next/font/google";
 import type { Metadata } from "next";
 import ConfigureAmplifyClientSide from "@/components/amplify/amplify-client-config";
 import AmplifyAuthProvider from "@/components/amplify/amplify-auth-provider";
+import { StarsBackground } from "@/components/background/stars";
 
 const saira = Saira({ subsets: ["latin"] });
 
@@ -19,12 +20,11 @@ export default function RootLayout({
 	return (
 		<html lang="en" className="dark" suppressHydrationWarning>
 			<body className={`${saira.className} overflow-hidden`}>
+				<StarsBackground className="absolute top-0 left-0 z-0 w-full h-full" />
 				<ConfigureAmplifyClientSide />
-				<main className="relative z-10 w-full h-screen flex justify-center items-center">
-					<AmplifyAuthProvider>
-						{children}
-					</AmplifyAuthProvider>
-				</main>
+				<AmplifyAuthProvider>
+					{children}
+				</AmplifyAuthProvider>
 			</body>
 		</html>
 	);
