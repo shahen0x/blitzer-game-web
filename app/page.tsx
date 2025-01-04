@@ -6,7 +6,7 @@ import { useRefStore } from "@/store/use-ref-store";
 import { Unity, useUnityContext } from "react-unity-webgl";
 
 import UnityLoader from "@/components/unity/unity-loader";
-import MainMenu from "@/components/main-menu";
+import MainMenu from "@/components/main-menu/index";
 import LevelGenerator from "@/components/level-generator";
 import SubmitToLeaderboard from "@/components/leaderboard/submit";
 import Leaderboard from "@/components/leaderboard";
@@ -146,7 +146,7 @@ export default function App() {
 				sendMessage={sendMessage}
 			/>
 
-			<Debug />
+			{/* <Debug /> */}
 
 		</main>
 	);
