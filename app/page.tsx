@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRefStore } from "@/store/use-ref-store";
 
 import { Unity, useUnityContext } from "react-unity-webgl";
@@ -17,12 +17,16 @@ import { useDataStore } from "@/store/use-data-store";
 import { getUrl } from "aws-amplify/storage";
 import MenuPause from "@/components/menu-pause";
 import MenuDeath from "@/components/menu-death";
+import Debug from "@/components/debug";
 
 export default function App() {
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { setContainerRef } = useRefStore();
 	const { levels, setLevels } = useDataStore();
+
+
+	const [hasInteracted, setHasInteracted] = useState(false);
 
 
 	// UNITY CONTEXT
@@ -90,57 +94,44 @@ export default function App() {
 	}, []);
 
 
+	const handleUserInteraction = () => {
+		setHasInteracted(true);
+		// Optionally, you could trigger Unity or any other necessary interaction here
+	};
+
+
 
 	return (
 		<main className="relative z-10 w-full h-screen flex justify-center items-center" ref={containerRef}>
+			{!hasInteracted ? (
+				<div
+					onClick={handleUserInteraction}
+					className="absolute z-20 w-full h-full flex justify-center items-center bg-gray-500 bg-opacity-50"
+				>
+					<button className="px-4 py-2 bg-blue-500 text-white rounded">Start Game</button>
+				</div>
+			) : (
+				<>
+					<UnityLoader isLoaded={isLoaded} loadingProgression={loadingProgression} />
 
-			<UnityLoader
-				isLoaded={isLoaded}
-				loadingProgression={loadingProgression}
-			/>
+					<Unity
+						id="game"
+						unityProvider={unityProvider}
+						className="fixed top-0 left-0 z-0 aspect-video w-full h-screen"
+					/>
 
-			<Unity
-				id="game"
-				unityProvider={unityProvider}
-				className="fixed top-0 left-0 z-0 aspect-video w-full h-screen"
-			/>
-
-			<MainMenu
-				addEventListener={addEventListener}
-				removeEventListener={removeEventListener}
-				sendMessage={sendMessage}
-			/>
-
-			<LevelGenerator
-				sendMessage={sendMessage}
-			/>
-
-			<LevelBrowser
-				sendMessage={sendMessage}
-			/>
-
-			<LevelUploader
-				addEventListener={addEventListener}
-				removeEventListener={removeEventListener}
-				takeScreenshot={takeScreenshot}
-			/>
-
-			<Leaderboard />
-			<SubmitToLeaderboard addEventListener={addEventListener} removeEventListener={removeEventListener} />
-
-
-			<MenuPause
-				addEventListener={addEventListener}
-				removeEventListener={removeEventListener}
-				sendMessage={sendMessage}
-			/>
-
-			<MenuDeath
-				addEventListener={addEventListener}
-				removeEventListener={removeEventListener}
-				sendMessage={sendMessage}
-			/>
-
+					{/* Your other components */}
+					<MainMenu addEventListener={addEventListener} removeEventListener={removeEventListener} sendMessage={sendMessage} />
+					<LevelGenerator sendMessage={sendMessage} />
+					<LevelBrowser sendMessage={sendMessage} />
+					<LevelUploader addEventListener={addEventListener} removeEventListener={removeEventListener} takeScreenshot={takeScreenshot} />
+					<Leaderboard />
+					<SubmitToLeaderboard addEventListener={addEventListener} removeEventListener={removeEventListener} />
+					<MenuPause addEventListener={addEventListener} removeEventListener={removeEventListener} sendMessage={sendMessage} />
+					<MenuDeath addEventListener={addEventListener} removeEventListener={removeEventListener} sendMessage={sendMessage} />
+					<Debug />
+				</>
+			)}
 		</main>
 	);
 }
