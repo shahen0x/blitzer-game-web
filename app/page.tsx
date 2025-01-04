@@ -23,7 +23,7 @@ export default function App() {
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { setContainerRef } = useRefStore();
-	const { levels, setLevels } = useDataStore();
+	const { setLevels } = useDataStore();
 
 
 	// UNITY CONTEXT
