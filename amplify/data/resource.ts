@@ -38,7 +38,7 @@ const schema = a.schema({
 			mode: a.enum(["normal", "bossFight"]),
 			time: a.float().required(),
 		})
-		.authorization((allow) => [allow.authenticated()]),
+		.authorization((allow) => [allow.authenticated().to(['create', 'read', 'update', 'delete'])]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

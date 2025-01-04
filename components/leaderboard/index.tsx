@@ -59,6 +59,10 @@ const Leaderboard = () => {
 	}, []);
 
 
+	async function handleDeleteLeaderboardEntry(id: any) {
+		await client.models.Leaderboard.delete({ id })
+	}
+
 
 	return (
 		<Dialog
@@ -99,6 +103,7 @@ const Leaderboard = () => {
 								<div>#{index + 1}</div>
 								<div>{item.username}</div>
 								<div className="text-right">{formatTime(item.time)}</div>
+								<button onClick={() => handleDeleteLeaderboardEntry(item.id)}>Delete</button>
 							</div>
 						))}
 					</div>

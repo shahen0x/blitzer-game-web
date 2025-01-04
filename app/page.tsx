@@ -127,7 +127,11 @@ export default function App() {
 			/>
 
 			<Leaderboard />
-			<SubmitToLeaderboard addEventListener={addEventListener} removeEventListener={removeEventListener} />
+			<SubmitToLeaderboard
+				addEventListener={addEventListener}
+				removeEventListener={removeEventListener}
+				sendMessage={sendMessage}
+			/>
 
 
 			<MenuPause
