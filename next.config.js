@@ -15,28 +15,16 @@ const nextConfig = {
 	async headers() {
 		return [
 			{
-				source: '/game/Build/:path*.wasm',
+				source: '/:path*',
 				headers: [
-					{ key: 'Content-Type', value: 'application/wasm' },
-					{ key: 'Access-Control-Allow-Origin', value: '*' },
+					{
+						key: 'Content-Type',
+						value: 'application/javascript; charset=utf-8',
+					},
 				],
 			},
-			{
-				source: '/game/Build/:path*.data',
-				headers: [
-					{ key: 'Content-Type', value: 'application/octet-stream' },
-					{ key: 'Access-Control-Allow-Origin', value: '*' },
-				],
-			},
-			{
-				source: '/game/Build/:path*.json',
-				headers: [
-					{ key: 'Content-Type', value: 'application/json' },
-					{ key: 'Access-Control-Allow-Origin', value: '*' },
-				],
-			},
-		];
-	},
+		]
+	}
 }
 
 module.exports = nextConfig
