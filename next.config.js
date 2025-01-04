@@ -11,20 +11,6 @@ const nextConfig = {
 		}
 		]
 	},
-
-	async headers() {
-		return [
-			{
-				source: '/:path*',
-				headers: [
-					{
-						key: 'Content-Type',
-						value: 'application/javascript; charset=utf-8',
-					},
-				],
-			},
-		]
-	}
 }
 
 module.exports = nextConfig
