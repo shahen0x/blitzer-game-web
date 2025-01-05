@@ -7,22 +7,27 @@
 
 "use client";
 
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useApplicationStore } from "@/store/use-application-store";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
 import { StarsBackground } from "../background/stars";
 import { Meteors } from "../background/meteors";
 import MainMenuBtn from "./main-menu-btn";
-import NavigableMenu, { MenuItem } from "../ui/navigable-menu";
-import { MoveRight } from "lucide-react";
 import { MainMenuSectionPrimary, MainMenuSectionSecondary, MainMenuSection } from "./main-menu-section";
+import { Button } from "../ui/button";
 
 interface MainMenuProps {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
 	removeEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
 	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void
 }
+
+
+// Helper function to check tutorial completion
+const isTutorialCompleted = (): boolean => {
+	return localStorage.getItem('tutorialCompleted') === "true";
+};
 
 
 const MainMenu: FC<MainMenuProps> = ({
@@ -32,7 +37,7 @@ const MainMenu: FC<MainMenuProps> = ({
 }) => {
 
 
-	// Access global states
+	// States
 	const {
 		mainMenuActive,
 		setMainMenuActive,
@@ -43,10 +48,19 @@ const MainMenu: FC<MainMenuProps> = ({
 	} = useApplicationStore();
 
 
+	// Force first time players to play the tutorial
+	const [showTutorial, setShowTutorial] = useState(false);
+
+	useEffect(() => {
+		setShowTutorial(!isTutorialCompleted());
+	}, []);
+
+
 	// Listens for the "ActivateMainMenu" event and sets the main menu active
 	const handleSetMainMain = useCallback(() => {
 		setMainMenuActive(true);
 		setGameModeActive('none');
+		setShowTutorial(!isTutorialCompleted());
 	}, []);
 
 	useEffect(() => {
@@ -70,6 +84,7 @@ const MainMenu: FC<MainMenuProps> = ({
 		setMainMenuActive(false);
 		setGameModeActive('tutorial');
 		sendMessage("MainMenuManager", "StartTutorial");
+		localStorage.setItem('tutorialCompleted', 'true');
 	}
 
 	const handleStartBossFightMode = () => {
@@ -87,39 +102,53 @@ const MainMenu: FC<MainMenuProps> = ({
 				<Meteors number={20} />
 			</div>
 
-			<div className="flex flex-col justify-center items-center space-y-8">
+			<div className="relative z-30 flex flex-col justify-center items-center space-y-8">
 				<Image src="/logo.png" alt="logo" width={720} height={215} className="w-2/3 h-auto max-w-xl relative z-50" priority />
 
-				<MainMenuSection title="Normal Mode">
-					<MainMenuSectionPrimary>
-						<MainMenuBtn onClick={handleStartNormalMode} title="Play Demo" />
-					</MainMenuSectionPrimary>
+				{showTutorial &&
+					<div className="p-6 bg-background/90 rounded-xl">
+						<h1 className="mb-2 text-3xl font-orbitron font-medium tracking-wide">Welcome to Blitzer</h1>
+						<p className="mb-4 text-muted-foreground">Since this is your first time playing, we recommend <br /> you start with the tutorial.</p>
+						<Button variant={"default"} onClick={handleStartTutorial} tabIndex={-1}>Start Tutorial</Button>
+					</div>
+				}
 
-					<MainMenuSectionSecondary>
-						<MainMenuBtn onClick={handleStartTutorial} title="Tutorial" />
-						<MainMenuBtn onClick={handleStartBossFightMode} title="Boss Fight" />
-					</MainMenuSectionSecondary>
-				</MainMenuSection>
+				{!showTutorial &&
+					<>
+						<MainMenuSection title="Normal Mode">
+							<MainMenuSectionPrimary>
+								<MainMenuBtn onClick={handleStartNormalMode} title="Play Demo" />
+							</MainMenuSectionPrimary>
+
+							<MainMenuSectionSecondary>
+								<MainMenuBtn onClick={handleStartTutorial} title="Tutorial" />
+								<MainMenuBtn onClick={handleStartBossFightMode} title="Boss Fight" />
+							</MainMenuSectionSecondary>
+						</MainMenuSection>
 
 
-				<MainMenuSection title="AI Generated Levels">
-					<MainMenuSectionPrimary>
-						<MainMenuBtn onClick={() => setIsLevelGeneratorActive(true)} title="Generate & Play" />
-						<MainMenuBtn onClick={() => setLevelBrowserActive(true)} title="Level Browser" />
-					</MainMenuSectionPrimary>
-				</MainMenuSection>
+						<MainMenuSection title="AI Generated Levels">
+							<MainMenuSectionPrimary>
+								<MainMenuBtn onClick={() => setIsLevelGeneratorActive(true)} title="Generate & Play" />
+								<MainMenuBtn onClick={() => setLevelBrowserActive(true)} title="Level Browser" />
+							</MainMenuSectionPrimary>
+						</MainMenuSection>
 
 
-				<MainMenuSection title="Other">
-					<MainMenuSectionPrimary>
-						<MainMenuBtn onClick={() => setLeaderboardDialogActive(true)} title="Leaderboards" />
-					</MainMenuSectionPrimary>
+						<MainMenuSection title="Other">
+							<MainMenuSectionPrimary>
+								<MainMenuBtn onClick={() => setLeaderboardDialogActive(true)} title="Leaderboards" />
+							</MainMenuSectionPrimary>
 
-					<MainMenuSectionSecondary>
-						<MainMenuBtn onClick={handleStartTutorial} title="Credits" />
-						<MainMenuBtn onClick={handleStartBossFightMode} title="Sign Out" />
-					</MainMenuSectionSecondary>
-				</MainMenuSection>
+							<MainMenuSectionSecondary>
+								<MainMenuBtn onClick={handleStartTutorial} title="Credits" />
+								<MainMenuBtn onClick={handleStartBossFightMode} title="Sign Out" />
+							</MainMenuSectionSecondary>
+						</MainMenuSection>
+					</>
+				}
+
+
 
 			</div>
 		</div>
