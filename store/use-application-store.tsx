@@ -44,6 +44,10 @@ interface ApplicationStore {
 	menuDeathActive: boolean;
 	setMenuDeathActive: (menuDeathActive: boolean) => void;
 
+
+	creditsDialogActive: boolean;
+	setCreditsDialogActive: (creditsDialogActive: boolean) => void;
+
 }
 
 export const useApplicationStore = create<ApplicationStore>((set) => ({
@@ -85,5 +89,8 @@ export const useApplicationStore = create<ApplicationStore>((set) => ({
 
 	menuDeathActive: false,
 	setMenuDeathActive: (menuDeathActive) => set({ menuDeathActive }),
+
+	creditsDialogActive: false,
+	setCreditsDialogActive: (creditsDialogActive) => set({ creditsDialogActive }),
 
 }));

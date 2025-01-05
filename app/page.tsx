@@ -18,9 +18,13 @@ import { getUrl } from "aws-amplify/storage";
 import MenuPause from "@/components/menu-pause";
 import MenuDeath from "@/components/menu-death";
 import Debug from "@/components/debug";
+import Credits from "@/components/credits";
+import useFullscreen from "@/hooks/use-fullscreen";
 
 export default function App() {
 
+	// Hooks
+	useFullscreen();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { setContainerRef } = useRefStore();
 	const { setLevels } = useDataStore();
@@ -36,7 +40,7 @@ export default function App() {
 		addEventListener,
 		removeEventListener,
 		sendMessage,
-		takeScreenshot
+		takeScreenshot,
 	} = useUnityContext({
 		loaderUrl: `/game/Build/${gameName}.loader.js`,
 		dataUrl: `/game/Build/${gameName}.data`,
@@ -145,6 +149,8 @@ export default function App() {
 				removeEventListener={removeEventListener}
 				sendMessage={sendMessage}
 			/>
+
+			<Credits />
 
 			{/* <Debug /> */}
 

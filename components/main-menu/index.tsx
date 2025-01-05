@@ -16,6 +16,8 @@ import { Meteors } from "../background/meteors";
 import MainMenuBtn from "./main-menu-btn";
 import { MainMenuSectionPrimary, MainMenuSectionSecondary, MainMenuSection } from "./main-menu-section";
 import { Button } from "../ui/button";
+import { signOut } from "aws-amplify/auth";
+import { useRouter } from "next/navigation";
 
 interface MainMenuProps {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
@@ -36,15 +38,19 @@ const MainMenu: FC<MainMenuProps> = ({
 	sendMessage
 }) => {
 
+	// Hooks
+	const router = useRouter();
 
-	// States
+
+	// Global States
 	const {
 		mainMenuActive,
 		setMainMenuActive,
 		setGameModeActive,
 		setIsLevelGeneratorActive,
 		setLevelBrowserActive,
-		setLeaderboardDialogActive
+		setLeaderboardDialogActive,
+		setCreditsDialogActive
 	} = useApplicationStore();
 
 
@@ -93,9 +99,14 @@ const MainMenu: FC<MainMenuProps> = ({
 		sendMessage("MainMenuManager", "StartBossFight");
 	}
 
+	const handleSignOut = async () => {
+		await signOut();
+		router.push("/");
+	}
+
 
 	return (
-		<div className="fixed top-0 left-0 z-50 w-full h-full flex justify-center items-center bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#4F2C7D] via-[#200643] to-[#05001c]">
+		<div className="fixed top-0 left-0 z-40 w-full h-full flex justify-center items-center bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#4F2C7D] via-[#200643] to-[#05001c]">
 
 			<StarsBackground className="absolute z-10" />
 			<div className="absolute top-0 right-0 w-full h-full -scale-x-100">
@@ -106,8 +117,8 @@ const MainMenu: FC<MainMenuProps> = ({
 				<Image src="/logo.png" alt="logo" width={720} height={215} className="w-2/3 h-auto max-w-xl relative z-50" priority />
 
 				{showTutorial &&
-					<div className="p-6 bg-background/90 rounded-xl">
-						<h1 className="mb-2 text-3xl font-orbitron font-medium tracking-wide">Welcome to Blitzer</h1>
+					<div className="p-6 bg-background/90 rounded-xl text-center">
+						{/* <h1 className="mb-2 text-3xl font-orbitron font-medium tracking-wide">Welcome to Blitzer</h1> */}
 						<p className="mb-4 text-muted-foreground">Since this is your first time playing, we recommend <br /> you start with the tutorial.</p>
 						<Button variant={"default"} onClick={handleStartTutorial} tabIndex={-1}>Start Tutorial</Button>
 					</div>
@@ -141,15 +152,12 @@ const MainMenu: FC<MainMenuProps> = ({
 							</MainMenuSectionPrimary>
 
 							<MainMenuSectionSecondary>
-								<MainMenuBtn onClick={handleStartTutorial} title="Credits" />
-								<MainMenuBtn onClick={handleStartBossFightMode} title="Sign Out" />
+								<MainMenuBtn onClick={() => setCreditsDialogActive(true)} title="Credits" />
+								<MainMenuBtn onClick={handleSignOut} title="Sign Out" />
 							</MainMenuSectionSecondary>
 						</MainMenuSection>
 					</>
 				}
-
-
-
 			</div>
 		</div>
 	)

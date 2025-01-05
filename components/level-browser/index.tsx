@@ -28,7 +28,7 @@ const LevelBrowser: FC<LevelBrowserProps> = ({ sendMessage }) => {
 			onOpenChange={setLevelBrowserActive}
 			className="max-w-7xl min-h-[calc(100vh_-_10rem)]"
 		>
-			<div className="relative z-10 h-fulloutline-none">
+			<div className="relative z-10 h-full outline-none">
 
 				<div className="mb-8 flex items-center">
 					<Button variant={"outline"} size={"icon"} className="shrink-0 mr-4" onClick={() => setLevelBrowserActive(false)}>

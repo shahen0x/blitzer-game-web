@@ -7,6 +7,7 @@ import Dialog from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
+import useFullscreen from "@/hooks/use-fullscreen";
 
 interface MenuPause {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
@@ -27,6 +28,8 @@ const MenuPause: FC<MenuPause> = ({
 	removeEventListener,
 	sendMessage
 }) => {
+
+	const { isFullscreen, toggleFullscreen } = useFullscreen();
 
 	const { menuPauseActive, setMenuPauseActive, gameModeActive } = useApplicationStore();
 	const [sfx, setSfx] = useState(true);
@@ -135,8 +138,11 @@ const MenuPause: FC<MenuPause> = ({
 							<Button onClick={() => handleGameAction(ConfirmationAction.Exit)} variant={"secondary"} className="w-full" tabIndex={-1}>Exit to Main Menu</Button>
 						</div>
 
+						<div className="my-4 w-10 h-[1px] mx-auto bg-white/10" />
 
-						<div className="my-6 w-10 h-[1px] mx-auto bg-white/10"></div>
+						<Button onClick={toggleFullscreen} variant={"outline"} size={"sm"} tabIndex={-1}>{isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}</Button>
+
+						<div className="my-4 w-10 h-[1px] mx-auto bg-white/10" />
 
 						<div className="relative flex items-center border rounded-2xl px-2">
 							<div className="flex items-center">
@@ -151,6 +157,7 @@ const MenuPause: FC<MenuPause> = ({
 								<Label htmlFor="music" className="cursor-pointer pl-2 py-2">Music</Label>
 							</div>
 						</div>
+
 					</>
 				}
 
