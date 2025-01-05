@@ -70,7 +70,6 @@ enum GenerationStep {
 const client = generateClient<Schema>({ authMode: "userPool" });
 const { useAIGeneration } = createAIHooks(client);
 
-
 const LevelGenerator: FC<LevelGeneratorProps> = ({
 	sendMessage
 }) => {
@@ -87,16 +86,37 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 	const [generationStep, setGenerationStep] = useState(GenerationStep.StartScreen);
 	const [{ data, isLoading, hasError, messages }, generateLevels] = useAIGeneration("GenerateLevels");
 
+	function generateInstructions() {
+		// generate random seed number
+		const seed = Math.floor(Math.random() * 1000);
+
+		// define extraction point options
+		const extractionPointOptions: string[] = [
+			"top middle",
+			"center middle",
+			"bottom middle",
+			"top right",
+			"center right",
+			"bottom right",
+		];
+
+		const instructions = "generate new level with seed number " + seed + ". Place the extraction point at the " + extractionPointOptions[seed % extractionPointOptions.length] + " of the grid";
+		return instructions;
+	}
+
+
 	async function handleStartChallenge() {
 		setGenerationStep(GenerationStep.Generating);
 		try {
-			generateLevels({ instructions: "generate new level" })
+			generateLevels({ instructions: generateInstructions() })
 		} catch (error) {
 			console.log(error);
 
 		}
 
 	}
+
+
 
 
 	useEffect(() => {

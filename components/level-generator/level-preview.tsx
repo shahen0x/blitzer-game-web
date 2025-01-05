@@ -171,6 +171,7 @@ const LevelPreview: FC<LevelPreviewProps> = ({
 			case 5:
 			case 6:
 			case 7: return 'bg-red-400 hover:bg-red-500';
+			case 8: return 'bg-primary hover:bg-primary/80 text-black';
 			default: return 'bg-white';
 		}
 	};
@@ -183,6 +184,7 @@ const LevelPreview: FC<LevelPreviewProps> = ({
 			case 5: return 'Pitfall';
 			case 6: return 'Laser';
 			case 7: return 'Turning Blades';
+			case 8: return 'Extraction Point';
 			default: return '';
 		}
 	};
