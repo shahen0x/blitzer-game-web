@@ -1,16 +1,12 @@
 "use client";
-import { FC, useEffect, useState } from "react";
 
+import { FC, useEffect, useState } from "react";
 import { useApplicationStore } from "@/store/use-application-store";
 import Dialog from "../ui/dialog";
 import { Button } from "../ui/button";
 import { StarsBackground } from "../background/stars";
 import MorphingText from "../ui/morphing-text";
-
 import LevelLoader from "./level-loader";
-
-import { Orbitron } from "next/font/google";
-
 import { generateClient } from "aws-amplify/api";
 import { createAIHooks } from "@aws-amplify/ui-react-ai";
 import { Schema } from "@/amplify/data/resource";
@@ -18,11 +14,6 @@ import LevelPreview from "./level-preview";
 import { convertToNumberArray } from "@/lib/convert-to-number-array";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
 
-const orbitron = Orbitron({
-	weight: '500',
-	subsets: ['latin'],
-	display: 'swap',
-});
 
 
 const startScreenTexts = [
@@ -66,6 +57,10 @@ enum GenerationStep {
 }
 
 
+const MAX_GENERATIONS = 10;
+const STORAGE_KEY = 'levelGenerations';
+
+
 // Init Amplify AI hook
 const client = generateClient<Schema>({ authMode: "userPool" });
 const { useAIGeneration } = createAIHooks(client);
@@ -84,7 +79,18 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 	} = useApplicationStore();
 
 	const [generationStep, setGenerationStep] = useState(GenerationStep.StartScreen);
+	const [generationsUsed, setGenerationsUsed] = useState(0);
 	const [{ data, isLoading, hasError, messages }, generateLevels] = useAIGeneration("GenerateLevels");
+
+
+	// Initialize generations count from localStorage
+	useEffect(() => {
+		const storedGenerations = localStorage.getItem(STORAGE_KEY);
+		const usedGenerations = storedGenerations ? parseInt(storedGenerations) : 0;
+		setGenerationsUsed(usedGenerations);
+	}, []);
+
+
 
 	function generateInstructions() {
 		// generate random seed number
@@ -106,23 +112,23 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 
 
 	async function handleStartChallenge() {
-		setGenerationStep(GenerationStep.Generating);
-		try {
-			generateLevels({ instructions: generateInstructions() })
-		} catch (error) {
-			console.log(error);
-
+		if (generationsUsed >= MAX_GENERATIONS) {
+			return alert("You have used all your credits. Play more in the Level Browser.");
 		}
 
+		setGenerationStep(GenerationStep.Generating);
+
+		// Update localStorage before generating
+		const newGenerationCount = generationsUsed + 1;
+		localStorage.setItem(STORAGE_KEY, newGenerationCount.toString());
+		setGenerationsUsed(newGenerationCount);
+
+		generateLevels({ instructions: generateInstructions() })
 	}
 
 
-
-
 	useEffect(() => {
-		if (data) {
-			setGenerationStep(GenerationStep.Generated);
-		};
+		if (data) setGenerationStep(GenerationStep.Generated);
 	}, [data]);
 
 
@@ -140,6 +146,11 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 	}
 
 
+	const getGenerationsText = () => {
+		return `${generationsUsed} / ${MAX_GENERATIONS} AI levels generated. ${generationsUsed >= MAX_GENERATIONS ? 'Play more in the Level Browser.' : ''}`;
+	}
+
+
 	return (
 		<Dialog
 			open={isLevelGeneratorActive}
@@ -152,7 +163,7 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 				{generationStep === GenerationStep.StartScreen &&
 					<>
 						<div className="w-full text-center space-y-1">
-							<MorphingText texts={startScreenTexts} className={`${orbitron.className} `} />
+							<MorphingText texts={startScreenTexts} className="font-orbitron" />
 						</div>
 
 						<div className="flex items-center gap-2">
@@ -169,14 +180,14 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 
 				{generationStep === GenerationStep.Generating &&
 					<>
-						<MorphingText texts={creationTexts} className={`${orbitron.className} `} />
+						<MorphingText texts={creationTexts} className="font-orbitron" />
 						<LevelLoader />
 					</>
 				}
 
 				{(generationStep === GenerationStep.Generated && data) &&
 					<>
-						<h1 className={`${orbitron.className} text-4xl`}>Your challenge is ready!</h1>
+						<h1 className="font-orbitron text-4xl">Your challenge is ready!</h1>
 						<LevelPreview animate={true} initialGrid={convertToNumberArray(data)} />
 						<Button variant={"orange"} size={"lg"} onClick={handleStartAILevelMode}>
 							Play Challenge
@@ -184,7 +195,9 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 					</>
 				}
 
-				<div className="absolute bottom-0 left-0 right-0 text-center text-muted-foreground text-sm"><span className="text-[#ff8a00]">1 / 3</span> AI levels left to generate. Play more in the Level Browser.</div>
+				<div className="absolute bottom-0 left-0 right-0 text-center text-muted-foreground text-sm">
+					{getGenerationsText()}
+				</div>
 			</div>
 		</Dialog>
 	)
