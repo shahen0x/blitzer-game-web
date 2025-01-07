@@ -59,9 +59,9 @@ const Leaderboard = () => {
 	}, []);
 
 
-	async function handleDeleteLeaderboardEntry(id: any) {
-		await client.models.Leaderboard.delete({ id })
-	}
+	// async function handleDeleteLeaderboardEntry(id: any) {
+	// 	await client.models.Leaderboard.delete({ id })
+	// }
 
 
 	return (
@@ -99,11 +99,11 @@ const Leaderboard = () => {
 				<ScrollArea className="h-[calc(100vh_-_21rem)] px-4">
 					<div className="space-y-2">
 						{leaderboard.filter((item) => item.mode === activeTab).map((item, index) => (
-							<div key={index} className="grid grid-cols-[4rem_1fr_6rem] items-center border px-4 py-2 rounded-xl text-sm">
+							<div key={index} className="grid grid-cols-[4rem_1fr_10rem] items-center border px-4 py-2 rounded-xl text-sm">
 								<div>#{index + 1}</div>
 								<div>{item.username}</div>
 								<div className="text-right">{formatTime(item.time)}</div>
-								<button onClick={() => handleDeleteLeaderboardEntry(item.id)}>Delete</button>
+								{/* <button onClick={() => handleDeleteLeaderboardEntry(item.id)}>Delete</button> */}
 							</div>
 						))}
 					</div>

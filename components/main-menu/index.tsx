@@ -11,8 +11,6 @@ import { FC, useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { useApplicationStore } from "@/store/use-application-store";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
-import { StarsBackground } from "../background/stars";
-import { Meteors } from "../background/meteors";
 import MainMenuBtn from "./main-menu-btn";
 import { MainMenuSectionPrimary, MainMenuSectionSecondary, MainMenuSection } from "./main-menu-section";
 import { Button } from "../ui/button";
@@ -101,24 +99,18 @@ const MainMenu: FC<MainMenuProps> = ({
 
 	const handleSignOut = async () => {
 		await signOut();
-		router.push("/");
+		window.location.reload();
 	}
 
 
 	return (
-		<div className="fixed top-0 left-0 z-40 w-full h-full flex justify-center items-center bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#4F2C7D] via-[#200643] to-[#05001c]">
-
-			<StarsBackground className="absolute z-10" />
-			<div className="absolute top-0 right-0 w-full h-full -scale-x-100">
-				<Meteors number={20} />
-			</div>
+		<div className="fixed top-0 left-0 z-40 w-2/3 h-full flex justify-center items-center">
 
 			<div className="relative z-30 flex flex-col justify-center items-center space-y-8">
-				<Image src="/logo.png" alt="logo" width={720} height={215} className="w-2/3 h-auto max-w-xl relative z-50" priority />
+				<Image src="/logo.png" alt="logo" width={720} height={215} className="w-auto h-auto max-w-xl relative z-50" priority />
 
 				{showTutorial &&
 					<div className="p-6 bg-background/90 rounded-xl text-center">
-						{/* <h1 className="mb-2 text-3xl font-orbitron font-medium tracking-wide">Welcome to Blitzer</h1> */}
 						<p className="mb-4 text-muted-foreground">Since this is your first time playing, we recommend <br /> you start with the tutorial.</p>
 						<Button variant={"default"} onClick={handleStartTutorial} tabIndex={-1}>Start Tutorial</Button>
 					</div>
@@ -128,7 +120,7 @@ const MainMenu: FC<MainMenuProps> = ({
 					<>
 						<MainMenuSection title="Normal Mode">
 							<MainMenuSectionPrimary>
-								<MainMenuBtn onClick={handleStartNormalMode} title="Play Demo" />
+								<MainMenuBtn onClick={handleStartNormalMode} title="Play Game" />
 							</MainMenuSectionPrimary>
 
 							<MainMenuSectionSecondary>

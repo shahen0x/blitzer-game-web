@@ -32,7 +32,7 @@ export default function App() {
 
 	// UNITY CONTEXT
 	// Used for loading and interacting unity
-	const gameName = "b8";
+	const gameName = "b10";
 	const {
 		unityProvider,
 		isLoaded,

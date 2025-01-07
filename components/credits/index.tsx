@@ -32,20 +32,21 @@ const Credits: FC<CreditsProps> = () => {
 				<div className="space-y-8">
 					<div>
 						<h3 className="text-lg">Deeshay Algoo</h3>
-						<p className="text-sm text-muted-foreground">Game Designer, Programmer, VFX.</p>
+						<p className="text-sm text-muted-foreground">Game Designer, Programmer, VFX, SFX</p>
 					</div>
 					<div>
 						<h3 className="text-lg">Shahen Algoo</h3>
-						<p className="text-sm text-muted-foreground">Full-Stack Developer & Artist</p>
+						<p className="text-sm text-muted-foreground">3D Artist, UX/UI Designer, Full-Stack Engineer</p>
 					</div>
 
 					<Separator />
 
 					<div>
 						<h3 className="text-lg">External Assets</h3>
-						<p className="text-sm text-muted-foreground">Dustyroom - Toon Shading</p>
-						<p className="text-sm text-muted-foreground">Sidearm Studios - Sound/FX</p>
+						<p className="text-sm text-muted-foreground">Dustyroom - Toon Shading Toolkit</p>
 						<p className="text-sm text-muted-foreground">Seaside Studios - VFX Creator Toolkit</p>
+						<p className="text-sm text-muted-foreground">Sidearm Studios - Sound/FX Bundle</p>
+						<p className="text-sm text-muted-foreground">Psychronic/Pixabay - Boss Music</p>
 					</div>
 				</div>
 

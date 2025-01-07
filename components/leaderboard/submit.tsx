@@ -40,6 +40,7 @@ const SubmitToLeaderboard: FC<SubmitToLeaderboardProps> = ({
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submissionSuccess, setSubmissionSuccess] = useState(false);
 	const [submissionError, setSubmissionError] = useState(false);
+	const [errorMessage, setErrorMessage] = useState<string>("An unknown error occured.");
 
 
 	useEffect(() => {
@@ -54,27 +55,68 @@ const SubmitToLeaderboard: FC<SubmitToLeaderboardProps> = ({
 
 	const submitToDB = async (time: any) => {
 
+		setIsSubmitting(true);
 		if (!username) return console.log("Username not found when submitting to leaderboard.");
 
-		const { data, errors } = await client.models.Leaderboard.create({
+		// Check if user already submitted a time
+		//
+		const { data: existingEntry } = await client.models.Leaderboard.list({
+			filter: {
+				userId: { eq: user.userId },
+				mode: { eq: gameModeActive as "normal" | "bossFight" }
+			}
+		});
+
+		if (existingEntry?.length > 0) {
+
+			// Check if new time is lower than existing time
+			if (time >= existingEntry[0].time) {
+				setIsSubmitting(false);
+				setSubmissionError(true);
+				setErrorMessage("You did better before!");
+				return;
+			}
+
+			// Update existing entry with better time
+			const { errors } = await client.models.Leaderboard.update({
+				id: existingEntry[0].id,
+				time: time
+			});
+
+			if (errors) {
+				setIsSubmitting(false);
+				setSubmissionError(true);
+				setErrorMessage("Error updating your entry.");
+				return;
+			}
+
+			setIsSubmitting(false);
+			setSubmissionSuccess(true);
+			return;
+		}
+
+
+		// Create new entry if none exists
+		const { errors } = await client.models.Leaderboard.create({
 			userId: user.userId,
 			username: username,
 			mode: gameModeActive === "none" ? null : (gameModeActive as "normal" | "bossFight"),
-			time: time,
+			time: time
 		});
 
 		if (errors) {
-			setSubmissionError(true);
 			setIsSubmitting(false);
+			setSubmissionError(true);
+			setErrorMessage("Error creating your entry.");
 			return;
 		}
 
-		if (data) {
-			setSubmissionSuccess(true);
-			setIsSubmitting(false);
-			return;
-		}
+		setIsSubmitting(false);
+		setSubmissionSuccess(true);
+		return;
 	}
+
+
 
 	const handleSubmitScore = useCallback((time: any) => {
 		setSubmitDialogActive(true);
@@ -92,6 +134,8 @@ const SubmitToLeaderboard: FC<SubmitToLeaderboardProps> = ({
 	function handleExitGame() {
 		setSubmitDialogActive(false);
 		sendMessage("UICanvas", "ExitToMainMenu");
+		setSubmissionSuccess(false);
+		setSubmissionError(false);
 	}
 
 
@@ -112,7 +156,7 @@ const SubmitToLeaderboard: FC<SubmitToLeaderboardProps> = ({
 							<>
 								{isSubmitting && <>Submitting to <br /> Leaderboard</>}
 								{submissionSuccess && <>Submission Successful!</>}
-								{submissionError && <>Submission Error!</>}
+								{submissionError && <>{errorMessage}</>}
 							</>
 						}
 					</h3>
