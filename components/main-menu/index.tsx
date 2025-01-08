@@ -16,6 +16,9 @@ import { MainMenuSectionPrimary, MainMenuSectionSecondary, MainMenuSection } fro
 import { Button } from "../ui/button";
 import { signOut } from "aws-amplify/auth";
 import { useRouter } from "next/navigation";
+import { useEvilAiStore } from "@/store/use-evil-ai-store";
+
+
 
 interface MainMenuProps {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
@@ -39,7 +42,6 @@ const MainMenu: FC<MainMenuProps> = ({
 	// Hooks
 	const router = useRouter();
 
-
 	// Global States
 	const {
 		mainMenuActive,
@@ -50,6 +52,7 @@ const MainMenu: FC<MainMenuProps> = ({
 		setLeaderboardDialogActive,
 		setCreditsDialogActive
 	} = useApplicationStore();
+	const { setEvilAiPanelActive } = useEvilAiStore();
 
 
 	// Force first time players to play the tutorial
@@ -82,6 +85,11 @@ const MainMenu: FC<MainMenuProps> = ({
 		setMainMenuActive(false);
 		setGameModeActive('normal');
 		sendMessage("MainMenuManager", "StartNormalMode");
+
+		// setEvilAiPanelActive to true after 3 seconds
+		setTimeout(() => {
+			setEvilAiPanelActive(true);
+		}, 3000);
 	}
 
 	function handleStartTutorial() {

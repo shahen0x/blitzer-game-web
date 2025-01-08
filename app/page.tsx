@@ -20,6 +20,7 @@ import MenuDeath from "@/components/menu-death";
 import Debug from "@/components/debug";
 import Credits from "@/components/credits";
 import useFullscreen from "@/hooks/use-fullscreen";
+import EvilAiPanel from "@/components/evil-ai-panel";
 
 export default function App() {
 
@@ -115,6 +116,8 @@ export default function App() {
 				removeEventListener={removeEventListener}
 				sendMessage={sendMessage}
 			/>
+
+			<EvilAiPanel />
 
 			<LevelGenerator
 				sendMessage={sendMessage}
