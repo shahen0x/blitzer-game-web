@@ -20,7 +20,7 @@ import MenuDeath from "@/components/menu-death";
 import Debug from "@/components/debug";
 import Credits from "@/components/credits";
 import useFullscreen from "@/hooks/use-fullscreen";
-import EvilAiVoicelines from "@/components/evil-ai-voicelines";
+import OverlordDialog from "@/components/overlord-dialog";
 
 export default function App() {
 
@@ -117,12 +117,6 @@ export default function App() {
 				sendMessage={sendMessage}
 			/>
 
-			<EvilAiVoicelines
-				addEventListener={addEventListener}
-				removeEventListener={removeEventListener}
-				sendMessage={sendMessage}
-			/>
-
 			<LevelGenerator
 				sendMessage={sendMessage}
 			/>
@@ -152,6 +146,12 @@ export default function App() {
 			/>
 
 			<MenuDeath
+				addEventListener={addEventListener}
+				removeEventListener={removeEventListener}
+				sendMessage={sendMessage}
+			/>
+
+			<OverlordDialog
 				addEventListener={addEventListener}
 				removeEventListener={removeEventListener}
 				sendMessage={sendMessage}

@@ -7,6 +7,7 @@ import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { BorderBeam } from "./border-beam";
 import { StarsBackground } from "../background/stars";
+import { useApplicationStore } from "@/store/use-application-store";
 
 interface DialogProps {
 	className?: string;
@@ -18,6 +19,7 @@ interface DialogProps {
 const Dialog: FC<DialogProps> = ({ className, open, onOpenChange, children }) => {
 
 	const { containerRef } = useRefStore();
+	const { menuDeathActive } = useApplicationStore();
 
 	return (
 		<DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
@@ -31,7 +33,7 @@ const Dialog: FC<DialogProps> = ({ className, open, onOpenChange, children }) =>
 						className
 					)}
 				>
-					<BorderBeam />
+					{!menuDeathActive && <BorderBeam />}
 					<StarsBackground className="absolute z-0" />
 
 					<VisuallyHidden.Root>
