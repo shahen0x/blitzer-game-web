@@ -8,6 +8,8 @@ import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import useFullscreen from "@/hooks/use-fullscreen";
+import useAiVoiceline from "@/hooks/use-ai-voiceline";
+import { useEvilAiStore } from "@/store/use-evil-ai-store";
 
 interface MenuPause {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
@@ -30,6 +32,7 @@ const MenuPause: FC<MenuPause> = ({
 }) => {
 
 	const { isFullscreen, toggleFullscreen } = useFullscreen();
+	const { setAudio, pauseAudio, resumeAudio, stopAudio: stopAiVoiceline } = useEvilAiStore();
 
 	const { menuPauseActive, setMenuPauseActive, gameModeActive } = useApplicationStore();
 	const [sfx, setSfx] = useState(true);
@@ -39,6 +42,7 @@ const MenuPause: FC<MenuPause> = ({
 
 
 	const handleSetPauseMenu = useCallback((sfxMute: any, musicMute: any) => {
+		pauseAudio();
 		setMenuPauseActive(true);
 		sfxMute === 0 ? setSfx(true) : setSfx(false);
 		musicMute === 0 ? setMusic(true) : setMusic(false);
@@ -52,6 +56,7 @@ const MenuPause: FC<MenuPause> = ({
 
 
 	const handleUnpauseMenu = useCallback(() => {
+		resumeAudio();
 		setMenuPauseActive(false);
 	}, []);
 
@@ -94,6 +99,9 @@ const MenuPause: FC<MenuPause> = ({
 			return;
 		}
 
+		stopAiVoiceline();
+		sendMessage("AudioManager", "SetVolume", 1);
+
 		const actions = {
 			[ConfirmationAction.Restart]: () => sendMessage("UICanvas", "RestartLevel"),
 			[ConfirmationAction.Exit]: () => sendMessage("UICanvas", "ExitToMainMenu")
@@ -129,7 +137,6 @@ const MenuPause: FC<MenuPause> = ({
 						}
 					</span>
 				</div>
-
 				{!confirmationActive &&
 					<>
 						<div className="space-y-3 outline-none">

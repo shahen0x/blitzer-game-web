@@ -87,9 +87,9 @@ const MainMenu: FC<MainMenuProps> = ({
 		sendMessage("MainMenuManager", "StartNormalMode");
 
 		// setEvilAiPanelActive to true after 3 seconds
-		setTimeout(() => {
-			setEvilAiPanelActive(true);
-		}, 3000);
+		// setTimeout(() => {
+		// 	setEvilAiPanelActive(true);
+		// }, 3000);
 	}
 
 	function handleStartTutorial() {

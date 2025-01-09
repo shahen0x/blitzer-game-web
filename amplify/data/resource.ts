@@ -1,14 +1,34 @@
 import { type ClientSchema, a, defineData } from "@aws-amplify/backend";
-import { levelGeneratorPrompt } from "./prompt";
+import { promptLevels } from "./prompt-levels";
+import { promptAiVoicelines } from "./prompt-ai-voicelines";
 
 const schema = a.schema({
 
 	GenerateLevels: a.generation({
 		aiModel: a.ai.model('Claude 3.5 Sonnet v2'),
-		systemPrompt: levelGeneratorPrompt,
+		systemPrompt: promptLevels,
 		inferenceConfiguration: {
 			maxTokens: 1000,
 			temperature: 0.5,
+			topP: 0.9,
+		}
+	})
+		.arguments({
+			instructions: a.string(),
+		})
+		.returns(
+			a.string()
+		)
+		.authorization((allow) => allow.authenticated()),
+
+
+
+	GenerateAiVoiceline: a.generation({
+		aiModel: a.ai.model('Claude 3.5 Sonnet v2'),
+		systemPrompt: promptAiVoicelines,
+		inferenceConfiguration: {
+			maxTokens: 2000,
+			temperature: 1,
 			topP: 0.9,
 		}
 	})

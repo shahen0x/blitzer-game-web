@@ -20,7 +20,7 @@ import MenuDeath from "@/components/menu-death";
 import Debug from "@/components/debug";
 import Credits from "@/components/credits";
 import useFullscreen from "@/hooks/use-fullscreen";
-import EvilAiPanel from "@/components/evil-ai-panel";
+import EvilAiVoicelines from "@/components/evil-ai-voicelines";
 
 export default function App() {
 
@@ -33,7 +33,7 @@ export default function App() {
 
 	// UNITY CONTEXT
 	// Used for loading and interacting unity
-	const gameName = "b10";
+	const gameName = "b11";
 	const {
 		unityProvider,
 		isLoaded,
@@ -117,7 +117,11 @@ export default function App() {
 				sendMessage={sendMessage}
 			/>
 
-			<EvilAiPanel />
+			<EvilAiVoicelines
+				addEventListener={addEventListener}
+				removeEventListener={removeEventListener}
+				sendMessage={sendMessage}
+			/>
 
 			<LevelGenerator
 				sendMessage={sendMessage}
