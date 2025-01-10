@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRefStore } from "@/store/use-ref-store";
 
 import { Unity, useUnityContext } from "react-unity-webgl";
@@ -21,14 +21,27 @@ import Debug from "@/components/debug";
 import Credits from "@/components/credits";
 import useFullscreen from "@/hooks/use-fullscreen";
 import OverlordDialog from "@/components/overlord-dialog";
+import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
+
+
 
 export default function App() {
 
 	// Hooks
+
 	useFullscreen();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { setContainerRef } = useRefStore();
 	const { setLevels } = useDataStore();
+
+
+
+	// Generate AI Overlord's voicelines
+	const hasRun = useRef(false);
+	const { generateVoicelines } = useOverlordStore();
+	const [overlordDialogActive, setOverlordDialogActive] = useState(false);
+	const [voiceEventSelected, setVoiceEventSelected] = useState<VoicelineType>("spawn");
+
 
 
 	// UNITY CONTEXT
@@ -61,8 +74,29 @@ export default function App() {
 	// CONTAINER REFERENCE
 	// Used for fullscreen compatibility
 	useEffect(() => {
-		setContainerRef(containerRef)
+		setContainerRef(containerRef);
 	}, [setContainerRef]);
+
+
+	// Generate AI Overlord's voicelines
+	// useEffect(() => {
+	// 	if (hasRun.current) return;
+	// 	hasRun.current = true;
+
+	// 	generateVoicelines();
+	// }, []);
+
+
+	// Overlord Voiceline Events
+	const voicelineEvents = useCallback((voicelineType: any) => {
+		setVoiceEventSelected(voicelineType);
+		setOverlordDialogActive(true);
+	}, []);
+
+	useEffect(() => {
+		addEventListener("PlayVoiceline", voicelineEvents);
+		return () => removeEventListener("PlayVoiceline", voicelineEvents);
+	}, [addEventListener, removeEventListener, voicelineEvents]);
 
 
 
@@ -151,11 +185,7 @@ export default function App() {
 				sendMessage={sendMessage}
 			/>
 
-			<OverlordDialog
-				addEventListener={addEventListener}
-				removeEventListener={removeEventListener}
-				sendMessage={sendMessage}
-			/>
+			<OverlordDialog type={voiceEventSelected} isActive={overlordDialogActive} setIsActive={setOverlordDialogActive} />
 
 			<Credits />
 

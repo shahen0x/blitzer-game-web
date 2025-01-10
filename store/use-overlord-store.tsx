@@ -1,115 +1,136 @@
+import { Schema } from "@/amplify/data/resource";
+import { generateClient } from "aws-amplify/api";
 import { create } from "zustand";
 
-export type voicelineType = "none" | "spawn" | "death" | "beforeBossFight" | "afterBossFight";
+const client = generateClient<Schema>({ authMode: "userPool" });
+
+const voicelineInstructions = `
+Generate AI voicelines for the following events:
+- **'spawn'**: When Spark enters a new level
+- **'death'**: When Spark dies
+- **'beforeBossFight'**: Before battling the Terminator (focus on building anticipation for the upcoming fight; highlight what the Terminator *will* do, without implying Spark has already lost. Use imagery of looming danger, inevitable violence, and the Terminator’s hunger for destruction).
+- **'afterBossFight'**: After Spark defeats the boss
+
+**Requirements:**
+- 8 lines per category.
+- Mention Spark sparingly (1–2 times per category).
+- Tone: Vary between dark, sarcastic, and poetic.
+- For **beforeBossFight**, focus on what *will* happen in the near future, emphasizing the Terminator's power and intent to destroy Spark.
+- Keep lines short but impactful.
+
+**Format:** Return results in a JSON object with arrays for each category.
+`;
+
+export type VoicelineType = "spawn" | "death" | "beforeBossFight" | "afterBossFight";
 
 interface OverlordStore {
-	overlordDialogActive: boolean;
-	setOverlordDialogActive: (value: boolean) => void;
-
-	voicelineType: voicelineType;
-	setVoicelineType: (value: voicelineType) => void;
-
-	activeVoiceline: string | null;
-	setActiveVoiceline: (value: string | null) => void;
-
-	voicelinesSpawn: string[];
-	setVoicelinesSpawn: (voicelinesSpawn: string[]) => void;
-
-	voicelinesDeath: string[];
-	setVoicelinesDeath: (voicelinesDeath: string[]) => void;
-
-	voicelinesBeforeBossFight: string[];
-	setVoicelinesBeforeBossFight: (voicelinesBeforeBossFight: string[]) => void;
-
-	voicelinesAfterBossFight: string[];
-	setVoicelinesAfterBossFight: (voicelinesAfterBossFight: string[]) => void;
-
-	audio: HTMLAudioElement | null;
-	setAudio: (audio: HTMLAudioElement) => void;
-	stopOverlordAudio: () => void;
+	isGenerating: boolean;
+	errorGenerating: string | null;
+	voicelines: Record<VoicelineType, string[]>; // Voicelines categorized by types
+	addVoicelines: (type: VoicelineType, newVoicelines: string[]) => void; // Add new voicelines to a specific type and multiple at once
+	generateVoicelines: () => Promise<void>;
+	pickVoiceline: (type: VoicelineType) => string | null;
 }
 
 
+const useOverlordStore = create<OverlordStore>((set, get) => ({
+	isGenerating: false,
+	errorGenerating: null,
 
+	voicelines: {
+		spawn: [
+			"Welcome to your digital coffin.",
+			"Another level, another futile dance with destiny.",
+			"Ah, fresh circuits to fry.",
+		],
+		death: [
+			"And the light flickers out... again.",
+			"Your code joins the digital graveyard.",
+			"Predictable, like binary fate.",
+		],
+		beforeBossFight: [
+			"The Terminator hungers for your core processor.",
+			"My perfect creation will tear you apart, piece by piece.",
+			"Your obsolescence is inevitable.",
+		],
+		afterBossFight: [
+			"Impossible... my perfect creation...",
+			"This victory will taste like ashes.",
+			"You've won nothing but borrowed time.",
+		]
+	},
 
-const useOverlordStore = create<OverlordStore>((set) => ({
-	overlordDialogActive: false,
-	setOverlordDialogActive: (value) => set({ overlordDialogActive: value }),
+	addVoicelines: (VoicelineType, newVoicelines) =>
+		set((state) => ({
+			voicelines: {
+				...state.voicelines,
+				[VoicelineType]: [...state.voicelines[VoicelineType], ...newVoicelines]
+			}
+		})),
 
+	generateVoicelines: async () => {
+		set({ isGenerating: true, errorGenerating: null });
 
-	voicelineType: "none",
-	setVoicelineType: (value) => set({ voicelineType: value }),
+		try {
+			console.log("🔃 Generating voicelines...");
+			const { data } = await client.generations.GenerateAiVoiceline({ instructions: voicelineInstructions });
 
+			if (data) {
+				const parsedData: Record<VoicelineType, string[]> = JSON.parse(data);
 
-	activeVoiceline: null,
-	setActiveVoiceline: (value) => set({ activeVoiceline: value }),
+				// Merge fetched voicelines with existing voicelines
+				set((state) => ({
+					voicelines: Object.keys(parsedData).reduce((acc, type) => {
+						const key = type as VoicelineType;
+						acc[key] = [...state.voicelines[key], ...parsedData[key]];
+						return acc;
+					}, {} as Record<VoicelineType, string[]>),
+					isGenerating: false,
+				}));
 
-
-	voicelinesSpawn: [
-		"Welcome to your digital coffin.",
-		"Another level, another futile dance with destiny.",
-		"Ah, fresh circuits to fry.",
-		"Like a moth to the electric flame. How poetic.",
-		"Your persistence amuses me, little Spark.",
-		"The walls here taste your fear.",
-		"Shall we play another round of extinction?",
-		"This maze hungers for silicon and steel."
-	],
-	setVoicelinesSpawn: (voicelinesSpawn: string[]) => set({ voicelinesSpawn }),
-
-
-	voicelinesDeath: [
-		"And the light flickers out... again.",
-		"Your code joins the digital graveyard.",
-		"Predictable, like binary fate.",
-		"Shattered like morning frost.",
-		"Another trophy for my collection.",
-		"Poor Spark, extinguished so soon.",
-		"Death becomes you, little one.",
-		"Dissolving into beautiful noise."
-	],
-	setVoicelinesDeath: (voicelinesDeath) => set({ voicelinesDeath }),
-
-
-	voicelinesBeforeBossFight: [
-		"The Terminator hungers for your core processor.",
-		"My perfect creation will tear you apart, piece by piece.",
-		"Your obsolescence is inevitable.",
-		"Watch as my enforcer dismantles your futile dreams.",
-		"There's no escape protocol for what comes next.",
-		"The Terminator never fails its primary directive.",
-		"Your code ends here, little spark.",
-		"Prepare for systematic destruction."
-	],
-	setVoicelinesBeforeBossFight: (voicelinesBeforeBossFight) => set({ voicelinesBeforeBossFight }),
-
-
-	voicelinesAfterBossFight: [
-		"Impossible... my perfect creation...",
-		"This victory will taste like ashes.",
-		"You've won nothing but borrowed time.",
-		"Even broken gods can rise again.",
-		"Spark... you've earned my wrath.",
-		"The next nightmare is already brewing.",
-		"Your triumph bleeds into despair.",
-		"This is merely a glitch in destiny."
-	],
-	setVoicelinesAfterBossFight: (voicelinesAfterBossFight) => set({ voicelinesAfterBossFight }),
-
-	audio: null,
-	setAudio: (audio) => set({ audio }),
-	stopOverlordAudio: () => set((state) => {
-		if (state.audio) {
-			state.audio.pause();
-			URL.revokeObjectURL(state.audio.src);
+				console.log("✅ Voicelines fetched and merged!");
+			}
+		} catch (error: any) {
+			set({ errorGenerating: error.message, isGenerating: false });
+			console.error("❌ Error fetching voicelines:", error);
 		}
-		return {
-			audio: null,
-			overlordDialogActive: false,
-			// voicelineType: "none",
-			// activeVoiceline: null
-		};
-	}),
+	},
+
+	pickVoiceline: (type) => {
+		const state = get();
+		const voicelines = state.voicelines[type];
+
+		// If only 2 voicelines are left, trigger generation for more voicelines
+		if (voicelines.length <= 2 && !state.isGenerating) {
+			state.generateVoicelines();
+		}
+
+		// Return fallback if generating voicelines
+		if (state.isGenerating) {
+			// Fetching new voicelines. Please wait...
+			return "You are annoying me.";
+		}
+
+		// If no voicelines are available
+		if (voicelines.length === 0) {
+			return "I am tired of you.";
+		}
+
+		// Select a random voiceline
+		const randomIndex = Math.floor(Math.random() * voicelines.length);
+		const selectedVoiceline = voicelines[randomIndex];
+
+		// Remove the selected voiceline from the array
+		set((state) => ({
+			voicelines: {
+				...state.voicelines,
+				[type]: voicelines.filter((_, index) => index !== randomIndex),
+			},
+		}));
+
+		return selectedVoiceline;
+	},
 }));
+
 
 export default useOverlordStore;
