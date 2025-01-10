@@ -1,4 +1,4 @@
-import useOverlordStore from "@/store/use-overlord-store";
+import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
 
 const useGenerateAudio = () => {
 

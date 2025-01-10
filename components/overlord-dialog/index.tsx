@@ -17,36 +17,67 @@ import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
 
 interface OverlordDialogProps {
 	type: VoicelineType;
-	isActive: boolean;
-	setIsActive: (isActive: boolean) => void;
+	isTriggered: boolean;
+	setIsTriggered: (isTriggered: boolean) => void;
+	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void;
 }
 
-const OverlordDialog: FC<OverlordDialogProps> = ({ type, isActive, setIsActive }) => {
+const OverlordDialog: FC<OverlordDialogProps> = ({ type, isTriggered, setIsTriggered, sendMessage }) => {
 
-	const { pickVoiceline } = useOverlordStore();
 	const [voiceLine, setVoiceLine] = useState<string | null>(null);
+	const [playVoiceline, setPlayVoiceline] = useState<boolean>(false);
+	const { menuDeathActive } = useApplicationStore();
+	const { pickVoiceline, audio, setAudio } = useOverlordStore();
+	const { generateAudio } = useGenerateAudio();
 
 	useEffect(() => {
-		if (isActive) {
-			const voiceline = pickVoiceline(type);
-			setVoiceLine(voiceline);
-			console.log("✅✅✅✅✅ voiceline:", voiceline);
-			setTimeout(() => {
-				setIsActive(false);
-			}, 3000);
+		if (!isTriggered) return;
+		handleVoicelines();
+	}, [isTriggered]);
+
+
+	const handleVoicelines = () => {
+		const voiceline = pickVoiceline(type);
+		if (!voiceline) return;
+		setVoiceLine(voiceline);
+		generateAudio(voiceline, handleCanPlaythrough, handleAudioEnd);
+	}
+
+	const handleCanPlaythrough = () => {
+		setPlayVoiceline(true);
+	}
+
+	const handleAudioEnd = () => {
+		setIsTriggered(false);
+		setPlayVoiceline(false);
+		setVoiceLine(null);
+	};
+
+
+	useEffect(() => {
+		if (playVoiceline) {
+			sendMessage("AudioManager", "SetVolume", 0.1);
+		} else {
+			sendMessage("AudioManager", "SetVolume", 1);
 		}
-
-	}, [isActive]);
-
+	}, [playVoiceline]);
 
 
+	useEffect(() => {
+		if (!audio) {
+			setIsTriggered(false);
+			setPlayVoiceline(false);
+			setVoiceLine(null);
+		}
+	}, [audio]);
 
-	return isActive ? (
+
+	return playVoiceline ? (
 		<div className={`
-			absolute max-w-96 flex items-center gap-4 cursor-default select-none z-40 left-10 bottom-64
+			absolute max-w-96 flex items-center gap-4 cursor-default select-none
+			${menuDeathActive ? "z-[100]" : "z-40"}
+			${menuDeathActive ? "left-1/2 -translate-x-1/2 top-52" : "left-10 bottom-64"}
 			`}>
-			{/* ${menuDeathActive ? "z-[100]" : "z-40"}
-			${menuDeathActive ? "left-1/2 -translate-x-1/2 top-52" : "left-10 bottom-64"} */}
 
 			<figure className="shrink-0 overflow-hidden w-20 h-20 rounded-xl bg-white/50 border-2 border-red-600 shadow-md">
 				<Image src="/overlord.jpg" width={200} height={200} priority quality={100} alt="AI Overlord" className="w-auto h-auto" onDragStart={(e) => e.preventDefault()} />

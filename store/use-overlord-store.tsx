@@ -30,6 +30,11 @@ interface OverlordStore {
 	addVoicelines: (type: VoicelineType, newVoicelines: string[]) => void; // Add new voicelines to a specific type and multiple at once
 	generateVoicelines: () => Promise<void>;
 	pickVoiceline: (type: VoicelineType) => string | null;
+	audio: HTMLAudioElement | null;
+	setAudio: (audio: HTMLAudioElement) => void;
+	pauseAudio: () => void;
+	resumeAudio: () => void;
+	stopOverlordAudio: () => void;
 }
 
 
@@ -105,12 +110,6 @@ const useOverlordStore = create<OverlordStore>((set, get) => ({
 			state.generateVoicelines();
 		}
 
-		// Return fallback if generating voicelines
-		if (state.isGenerating) {
-			// Fetching new voicelines. Please wait...
-			return "You are annoying me.";
-		}
-
 		// If no voicelines are available
 		if (voicelines.length === 0) {
 			return "I am tired of you.";
@@ -130,6 +129,31 @@ const useOverlordStore = create<OverlordStore>((set, get) => ({
 
 		return selectedVoiceline;
 	},
+
+	audio: null,
+	setAudio: (audio) => set({ audio }),
+
+	pauseAudio: () => set((state) => {
+		if (state.audio) {
+			state.audio.pause();
+		}
+		return { audio: state.audio };
+	}),
+
+	resumeAudio: () => set((state) => {
+		if (state.audio) {
+			state.audio.play();
+		}
+		return { audio: state.audio };
+	}),
+
+	stopOverlordAudio: () => set((state) => {
+		if (state.audio) {
+			state.audio.pause();
+			URL.revokeObjectURL(state.audio.src);
+		}
+		return { audio: null };
+	}),
 }));
 
 

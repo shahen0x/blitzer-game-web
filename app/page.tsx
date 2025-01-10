@@ -185,7 +185,12 @@ export default function App() {
 				sendMessage={sendMessage}
 			/>
 
-			<OverlordDialog type={voiceEventSelected} isActive={overlordDialogActive} setIsActive={setOverlordDialogActive} />
+			<OverlordDialog
+				type={voiceEventSelected}
+				isTriggered={overlordDialogActive}
+				setIsTriggered={setOverlordDialogActive}
+				sendMessage={sendMessage}
+			/>
 
 			<Credits />
 
