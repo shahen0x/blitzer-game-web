@@ -16,7 +16,6 @@ import { MainMenuSectionPrimary, MainMenuSectionSecondary, MainMenuSection } fro
 import { Button } from "../ui/button";
 import { signOut } from "aws-amplify/auth";
 import { useRouter } from "next/navigation";
-import { useEvilAiStore } from "@/store/use-evil-ai-store";
 
 
 
@@ -52,7 +51,6 @@ const MainMenu: FC<MainMenuProps> = ({
 		setLeaderboardDialogActive,
 		setCreditsDialogActive
 	} = useApplicationStore();
-	const { setEvilAiPanelActive } = useEvilAiStore();
 
 
 	// Force first time players to play the tutorial
