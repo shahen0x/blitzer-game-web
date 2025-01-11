@@ -2,7 +2,7 @@ import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
 
 const useGenerateAudio = () => {
 
-	const { setAudio, stopOverlordAudio } = useOverlordStore();
+	const { audio: storedAudio, setAudio, stopOverlordAudio } = useOverlordStore();
 
 	const generateAudio = async (
 		text: string,
@@ -26,7 +26,8 @@ const useGenerateAudio = () => {
 			const audioUrl = URL.createObjectURL(audioBlob);
 			const audio = new Audio(audioUrl);
 
-			stopOverlordAudio();
+			const stopped = stopOverlordAudio();
+			// console.log("🎸🎸🎸", storedAudio);
 
 			// Wait for audio to be loaded before playing
 			await new Promise((resolve, reject) => {
@@ -60,9 +61,10 @@ const useGenerateAudio = () => {
 
 				// Start loading the audio
 				audio.load();
-			});
 
+			});
 			setAudio(audio);
+
 		} catch (error) {
 			console.error('Error:', error);
 		}

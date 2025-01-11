@@ -26,8 +26,9 @@ const OverlordDialog: FC<OverlordDialogProps> = ({ type, isTriggered, setIsTrigg
 
 	const [voiceLine, setVoiceLine] = useState<string | null>(null);
 	const [playVoiceline, setPlayVoiceline] = useState<boolean>(false);
+
 	const { menuDeathActive } = useApplicationStore();
-	const { pickVoiceline, audio, setAudio } = useOverlordStore();
+	const { pickVoiceline, audio, setAudio, audioStopped, setAudioStopped } = useOverlordStore();
 	const { generateAudio } = useGenerateAudio();
 
 	useEffect(() => {
@@ -44,40 +45,30 @@ const OverlordDialog: FC<OverlordDialogProps> = ({ type, isTriggered, setIsTrigg
 	}
 
 	const handleCanPlaythrough = () => {
+		sendMessage("AudioManager", "SetVolume", 0.1);
 		setPlayVoiceline(true);
 	}
 
 	const handleAudioEnd = () => {
 		setIsTriggered(false);
 		setPlayVoiceline(false);
-		setVoiceLine(null);
+		sendMessage("AudioManager", "SetVolume", 1);
 	};
 
 
+	// Stop everything if audio is stopped
 	useEffect(() => {
-		if (playVoiceline) {
-			sendMessage("AudioManager", "SetVolume", 0.1);
-		} else {
-			sendMessage("AudioManager", "SetVolume", 1);
-		}
-	}, [playVoiceline]);
-
-
-	useEffect(() => {
-		if (!audio) {
+		if (audioStopped && !audio) {
 			setIsTriggered(false);
 			setPlayVoiceline(false);
-			setVoiceLine(null);
+			setAudioStopped(false);
 		}
-	}, [audio]);
+	}, [audioStopped]);
 
 
 	return playVoiceline ? (
 		<div className={`
-			absolute max-w-96 flex items-center gap-4 cursor-default select-none
-			${menuDeathActive ? "z-[100]" : "z-40"}
-			${menuDeathActive ? "left-1/2 -translate-x-1/2 top-52" : "left-10 bottom-64"}
-			`}>
+			absolute max-w-96 flex items-center gap-4 cursor-default select-none left-10 bottom-64 ${menuDeathActive ? "z-[100]" : "z-40"}`}>
 
 			<figure className="shrink-0 overflow-hidden w-20 h-20 rounded-xl bg-white/50 border-2 border-red-600 shadow-md">
 				<Image src="/overlord.jpg" width={200} height={200} priority quality={100} alt="AI Overlord" className="w-auto h-auto" onDragStart={(e) => e.preventDefault()} />

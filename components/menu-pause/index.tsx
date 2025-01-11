@@ -31,9 +31,8 @@ const MenuPause: FC<MenuPause> = ({
 }) => {
 
 	const { isFullscreen, toggleFullscreen } = useFullscreen();
-	// const { setAudio, pauseAudio, resumeAudio, stopAudio: stopAiVoiceline } = useEvilAiStore();
 
-	const { audio, pauseAudio, resumeAudio, stopOverlordAudio } = useOverlordStore();
+	const { pauseAudio, resumeAudio, stopOverlordAudio } = useOverlordStore();
 
 	const { menuPauseActive, setMenuPauseActive, gameModeActive } = useApplicationStore();
 
@@ -46,7 +45,7 @@ const MenuPause: FC<MenuPause> = ({
 
 
 	const handleSetPauseMenu = useCallback((sfxMute: any, musicMute: any) => {
-		// pauseAudio()
+		pauseAudio()
 		setMenuPauseActive(true);
 		sfxMute === 0 ? setSfx(true) : setSfx(false);
 		musicMute === 0 ? setMusic(true) : setMusic(false);
@@ -60,7 +59,7 @@ const MenuPause: FC<MenuPause> = ({
 
 
 	const handleUnpauseMenu = useCallback(() => {
-		// resumeAudio();
+		resumeAudio();
 		setMenuPauseActive(false);
 	}, []);
 
@@ -104,7 +103,7 @@ const MenuPause: FC<MenuPause> = ({
 		}
 
 		stopOverlordAudio();
-		// sendMessage("AudioManager", "SetVolume", 1);
+		sendMessage("AudioManager", "SetVolume", 1);
 
 		const actions = {
 			[ConfirmationAction.Restart]: () => sendMessage("UICanvas", "RestartLevel"),

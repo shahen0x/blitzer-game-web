@@ -35,6 +35,8 @@ interface OverlordStore {
 	pauseAudio: () => void;
 	resumeAudio: () => void;
 	stopOverlordAudio: () => void;
+	audioStopped: boolean;
+	setAudioStopped: (audioStopped: boolean) => void;
 }
 
 
@@ -44,9 +46,9 @@ const useOverlordStore = create<OverlordStore>((set, get) => ({
 
 	voicelines: {
 		spawn: [
-			"Welcome to your digital coffin.",
+			"Welcome to your digital coffin. Another level, another futile dance with destiny.",
 			"Another level, another futile dance with destiny.",
-			"Ah, fresh circuits to fry.",
+			"Ah, fresh circuits to fry. Another level, another futile dance with destiny.",
 		],
 		death: [
 			"And the light flickers out... again.",
@@ -152,8 +154,11 @@ const useOverlordStore = create<OverlordStore>((set, get) => ({
 			state.audio.pause();
 			URL.revokeObjectURL(state.audio.src);
 		}
-		return { audio: null };
+		return { audio: null, audioStopped: true };
 	}),
+
+	audioStopped: false,
+	setAudioStopped: (audioStopped) => set({ audioStopped }),
 }));
 
 

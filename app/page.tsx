@@ -38,9 +38,10 @@ export default function App() {
 
 	// Generate AI Overlord's voicelines
 	const hasRun = useRef(false);
-	const { generateVoicelines } = useOverlordStore();
+	const { generateVoicelines, audio } = useOverlordStore();
 	const [overlordDialogActive, setOverlordDialogActive] = useState(false);
 	const [voiceEventSelected, setVoiceEventSelected] = useState<VoicelineType>("spawn");
+	console.log("🎸🎸🎸", audio);
 
 
 
