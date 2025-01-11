@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type GameMode = 'none' | 'normal' | 'custom' | 'bossFight' | 'tutorial';
+export type GameMode = 'none' | 'normal' | 'custom' | 'bossFight' | 'tutorial' | 'survival';
 export type CustomGameLaunchedFrom = 'none' | 'ai-generator' | 'level-browser';
 
 interface ApplicationStore {

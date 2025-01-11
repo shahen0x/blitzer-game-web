@@ -22,6 +22,9 @@ import Credits from "@/components/credits";
 import useFullscreen from "@/hooks/use-fullscreen";
 import OverlordDialog from "@/components/overlord-dialog";
 import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
+import SurvivalManager from "@/components/survival-manager";
+import { useSurvivalModeStore } from "@/store/use-survival-mode-store";
+import SurvivalSubmitToLeaderboard from "@/components/survival-manager/submit";
 
 
 
@@ -77,12 +80,12 @@ export default function App() {
 
 
 	// Generate AI Overlord's voicelines
-	useEffect(() => {
-		if (hasRun.current) return;
-		hasRun.current = true;
+	// useEffect(() => {
+	// 	if (hasRun.current) return;
+	// 	hasRun.current = true;
 
-		generateVoicelines();
-	}, []);
+	// 	generateVoicelines();
+	// }, []);
 
 
 	// Overlord Voiceline Events
@@ -144,6 +147,18 @@ export default function App() {
 			/>
 
 			<MainMenu
+				addEventListener={addEventListener}
+				removeEventListener={removeEventListener}
+				sendMessage={sendMessage}
+			/>
+
+			<SurvivalManager
+				addEventListener={addEventListener}
+				removeEventListener={removeEventListener}
+				sendMessage={sendMessage}
+			/>
+
+			<SurvivalSubmitToLeaderboard
 				addEventListener={addEventListener}
 				removeEventListener={removeEventListener}
 				sendMessage={sendMessage}

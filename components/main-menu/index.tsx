@@ -16,6 +16,8 @@ import { MainMenuSectionPrimary, MainMenuSectionSecondary, MainMenuSection } fro
 import { Button } from "../ui/button";
 import { signOut } from "aws-amplify/auth";
 import { useRouter } from "next/navigation";
+import { useSurvivalModeStore } from "@/store/use-survival-mode-store";
+import useLevelGenerator from "@/hooks/use-level-generator";
 
 
 
@@ -52,6 +54,9 @@ const MainMenu: FC<MainMenuProps> = ({
 		setCreditsDialogActive
 	} = useApplicationStore();
 
+	const { gridData, setGridData } = useSurvivalModeStore();
+	const { generateLevel } = useLevelGenerator();
+
 
 	// Force first time players to play the tutorial
 	const [showTutorial, setShowTutorial] = useState(false);
@@ -83,11 +88,6 @@ const MainMenu: FC<MainMenuProps> = ({
 		setMainMenuActive(false);
 		setGameModeActive('normal');
 		sendMessage("MainMenuManager", "StartNormalMode");
-
-		// setEvilAiPanelActive to true after 3 seconds
-		// setTimeout(() => {
-		// 	setEvilAiPanelActive(true);
-		// }, 3000);
 	}
 
 	function handleStartTutorial() {
@@ -102,6 +102,18 @@ const MainMenu: FC<MainMenuProps> = ({
 		setGameModeActive('bossFight');
 		sendMessage("MainMenuManager", "StartBossFight");
 	}
+
+	const handleStartSurvivalMode = async () => {
+		setMainMenuActive(false);
+		setGameModeActive('survival');
+		sendMessage("MainMenuManager", "StartSurvivalMode", `{grid: ${gridData}}`);
+
+		// PreGenerate a new AI level
+		const generatedLevel = await generateLevel();
+		if (generatedLevel) setGridData(generatedLevel);
+	}
+
+
 
 	const handleSignOut = async () => {
 		await signOut();
@@ -126,7 +138,7 @@ const MainMenu: FC<MainMenuProps> = ({
 					<>
 						<MainMenuSection title="Normal Mode">
 							<MainMenuSectionPrimary>
-								<MainMenuBtn onClick={handleStartNormalMode} title="Play Game" />
+								<MainMenuBtn onClick={handleStartNormalMode} title="Play Campaign" />
 							</MainMenuSectionPrimary>
 
 							<MainMenuSectionSecondary>
@@ -138,9 +150,13 @@ const MainMenu: FC<MainMenuProps> = ({
 
 						<MainMenuSection title="AI Generated Levels">
 							<MainMenuSectionPrimary>
-								<MainMenuBtn onClick={() => setIsLevelGeneratorActive(true)} title="Generate & Play" />
-								<MainMenuBtn onClick={() => setLevelBrowserActive(true)} title="Level Browser" />
+								<MainMenuBtn onClick={handleStartSurvivalMode} title="Survival Mode" />
 							</MainMenuSectionPrimary>
+							<MainMenuSectionSecondary>
+								<MainMenuBtn onClick={() => setIsLevelGeneratorActive(true)} title="Generate" />
+								<MainMenuBtn onClick={() => setLevelBrowserActive(true)} title="Browse" />
+
+							</MainMenuSectionSecondary>
 						</MainMenuSection>
 
 

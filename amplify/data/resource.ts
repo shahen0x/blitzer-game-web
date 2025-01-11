@@ -55,8 +55,9 @@ const schema = a.schema({
 		.model({
 			userId: a.string().required(),
 			username: a.string().required(),
-			mode: a.enum(["normal", "bossFight"]),
+			mode: a.enum(["normal", "bossFight", "survival"]),
 			time: a.float().required(),
+			round: a.integer()
 		})
 		.authorization((allow) => [allow.authenticated().to(['create', 'read', 'update', 'delete'])]),
 });
