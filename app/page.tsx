@@ -47,7 +47,7 @@ export default function App() {
 
 	// UNITY CONTEXT
 	// Used for loading and interacting unity
-	const gameName = "b11";
+	const gameName = "b12";
 	const {
 		unityProvider,
 		isLoaded,
@@ -80,12 +80,12 @@ export default function App() {
 
 
 	// Generate AI Overlord's voicelines
-	// useEffect(() => {
-	// 	if (hasRun.current) return;
-	// 	hasRun.current = true;
+	useEffect(() => {
+		if (hasRun.current) return;
+		hasRun.current = true;
 
-	// 	generateVoicelines();
-	// }, []);
+		generateVoicelines();
+	}, []);
 
 
 	// Overlord Voiceline Events

@@ -114,6 +114,12 @@ const MainMenu: FC<MainMenuProps> = ({
 	}
 
 
+	const handleStartFootageScene = () => {
+		setMainMenuActive(false);
+		setGameModeActive('bossFight');
+		sendMessage("MainMenuManager", "StartFootageScene");
+	}
+
 
 	const handleSignOut = async () => {
 		await signOut();
@@ -138,6 +144,7 @@ const MainMenu: FC<MainMenuProps> = ({
 					<>
 						<MainMenuSection title="Normal Mode">
 							<MainMenuSectionPrimary>
+								{/* <MainMenuBtn onClick={handleStartFootageScene} title="Play Campaign" /> */}
 								<MainMenuBtn onClick={handleStartNormalMode} title="Play Campaign" />
 							</MainMenuSectionPrimary>
 

@@ -102,19 +102,20 @@ const Leaderboard = () => {
 	}
 
 
-	// async function handleDeleteLeaderboardEntry(id: any) {
-	// 	await client.models.Leaderboard.delete({ id })
-	// }
+	async function handleDeleteLeaderboardEntry(id: any) {
+		await client.models.Leaderboard.delete({ id })
+	}
+
 
 
 
 	async function createEntry() {
 		const { errors } = await client.models.Leaderboard.create({
-			userId: "d6c3ac96-e8c9-4016-9eab-42d753c75311",
+			userId: "lkiklihkh",
 			username: "DeadShot",
 			mode: "survival",
-			time: 140,
-			round: 4
+			time: 1452.62,
+			round: 11
 		});
 	}
 
@@ -141,6 +142,8 @@ const Leaderboard = () => {
 					</div>
 				</div>
 
+				{/* <button onClick={createEntry}>Create Entry</button> */}
+
 				{/* LEADERBOARD TABLE HEAD */}
 				<div className="mb-4 px-4">
 					<div className={`grid text-sm text-muted-foreground border px-4 py-2 rounded-xl bg-secondary/20 ${activeTab === "survival" ? "grid-cols-[4rem_1fr_7rem_6rem]" : "grid-cols-[4rem_1fr_6rem]"}`}>
@@ -150,7 +153,6 @@ const Leaderboard = () => {
 						<div className="text-right">Time</div>
 					</div>
 				</div>
-				{/* <button onClick={createEntry}>Create Entry</button> */}
 
 
 				{/* LEADERBOARD ENTRIES */}
@@ -162,6 +164,7 @@ const Leaderboard = () => {
 								<div>{item.username}</div>
 								{activeTab === "survival" && <div>{item.round}</div>}
 								<div className="text-right">{formatTime(item.time)}</div>
+								{/* <button onClick={() => handleDeleteLeaderboardEntry(item.id)}>Delete</button> */}
 							</div>
 						))}
 					</div>
