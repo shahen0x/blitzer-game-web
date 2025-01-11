@@ -8,8 +8,7 @@ import { Button } from "../ui/button";
 import { Switch } from "../ui/switch";
 import { Label } from "../ui/label";
 import useFullscreen from "@/hooks/use-fullscreen";
-import useAiVoiceline from "@/hooks/use-ai-voiceline";
-import { useEvilAiStore } from "@/store/use-evil-ai-store";
+import useOverlordStore from "@/store/use-overlord-store";
 
 interface MenuPause {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
@@ -32,9 +31,13 @@ const MenuPause: FC<MenuPause> = ({
 }) => {
 
 	const { isFullscreen, toggleFullscreen } = useFullscreen();
-	const { setAudio, pauseAudio, resumeAudio, stopAudio: stopAiVoiceline } = useEvilAiStore();
+
+	const { pauseAudio, resumeAudio, stopOverlordAudio } = useOverlordStore();
 
 	const { menuPauseActive, setMenuPauseActive, gameModeActive } = useApplicationStore();
+
+
+
 	const [sfx, setSfx] = useState(true);
 	const [music, setMusic] = useState(true);
 	const [confirmationActive, setConfirmationActive] = useState(false);
@@ -42,7 +45,7 @@ const MenuPause: FC<MenuPause> = ({
 
 
 	const handleSetPauseMenu = useCallback((sfxMute: any, musicMute: any) => {
-		pauseAudio();
+		pauseAudio()
 		setMenuPauseActive(true);
 		sfxMute === 0 ? setSfx(true) : setSfx(false);
 		musicMute === 0 ? setMusic(true) : setMusic(false);
@@ -99,7 +102,7 @@ const MenuPause: FC<MenuPause> = ({
 			return;
 		}
 
-		stopAiVoiceline();
+		stopOverlordAudio();
 		sendMessage("AudioManager", "SetVolume", 1);
 
 		const actions = {

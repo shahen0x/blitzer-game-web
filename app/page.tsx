@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRefStore } from "@/store/use-ref-store";
 
 import { Unity, useUnityContext } from "react-unity-webgl";
@@ -20,15 +20,29 @@ import MenuDeath from "@/components/menu-death";
 import Debug from "@/components/debug";
 import Credits from "@/components/credits";
 import useFullscreen from "@/hooks/use-fullscreen";
-import EvilAiVoicelines from "@/components/evil-ai-voicelines";
+import OverlordDialog from "@/components/overlord-dialog";
+import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
+
+
 
 export default function App() {
 
 	// Hooks
+
 	useFullscreen();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { setContainerRef } = useRefStore();
 	const { setLevels } = useDataStore();
+
+
+
+	// Generate AI Overlord's voicelines
+	const hasRun = useRef(false);
+	const { generateVoicelines, audio } = useOverlordStore();
+	const [overlordDialogActive, setOverlordDialogActive] = useState(false);
+	const [voiceEventSelected, setVoiceEventSelected] = useState<VoicelineType>("spawn");
+	console.log("🎸🎸🎸", audio);
+
 
 
 	// UNITY CONTEXT
@@ -61,8 +75,29 @@ export default function App() {
 	// CONTAINER REFERENCE
 	// Used for fullscreen compatibility
 	useEffect(() => {
-		setContainerRef(containerRef)
+		setContainerRef(containerRef);
 	}, [setContainerRef]);
+
+
+	// Generate AI Overlord's voicelines
+	// useEffect(() => {
+	// 	if (hasRun.current) return;
+	// 	hasRun.current = true;
+
+	// 	generateVoicelines();
+	// }, []);
+
+
+	// Overlord Voiceline Events
+	const voicelineEvents = useCallback((voicelineType: any) => {
+		setVoiceEventSelected(voicelineType);
+		setOverlordDialogActive(true);
+	}, []);
+
+	useEffect(() => {
+		addEventListener("PlayVoiceline", voicelineEvents);
+		return () => removeEventListener("PlayVoiceline", voicelineEvents);
+	}, [addEventListener, removeEventListener, voicelineEvents]);
 
 
 
@@ -117,12 +152,6 @@ export default function App() {
 				sendMessage={sendMessage}
 			/>
 
-			<EvilAiVoicelines
-				addEventListener={addEventListener}
-				removeEventListener={removeEventListener}
-				sendMessage={sendMessage}
-			/>
-
 			<LevelGenerator
 				sendMessage={sendMessage}
 			/>
@@ -154,6 +183,13 @@ export default function App() {
 			<MenuDeath
 				addEventListener={addEventListener}
 				removeEventListener={removeEventListener}
+				sendMessage={sendMessage}
+			/>
+
+			<OverlordDialog
+				type={voiceEventSelected}
+				isTriggered={overlordDialogActive}
+				setIsTriggered={setOverlordDialogActive}
 				sendMessage={sendMessage}
 			/>
 

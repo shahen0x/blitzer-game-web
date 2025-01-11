@@ -5,6 +5,7 @@ import Dialog from "../ui/dialog";
 import { useApplicationStore } from "@/store/use-application-store";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
 import { Button } from "../ui/button";
+import useOverlordStore from "@/store/use-overlord-store";
 
 interface MenuDeathProps {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
@@ -19,6 +20,7 @@ const MenuDeath: FC<MenuDeathProps> = ({
 }) => {
 
 	const { menuDeathActive, setMenuDeathActive } = useApplicationStore();
+	const { stopOverlordAudio } = useOverlordStore();
 
 
 	const handleSetDeathMenu = useCallback(() => {
@@ -32,11 +34,13 @@ const MenuDeath: FC<MenuDeathProps> = ({
 
 
 	function handleRestartGame() {
+		stopOverlordAudio();
 		setMenuDeathActive(false);
 		sendMessage("UICanvas", "RestartLevel")
 	}
 
 	function handleExitGame() {
+		stopOverlordAudio();
 		setMenuDeathActive(false);
 		sendMessage("UICanvas", "ExitToMainMenu");
 	}
