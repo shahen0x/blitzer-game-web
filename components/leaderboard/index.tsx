@@ -31,7 +31,11 @@ const Leaderboard = () => {
 	const { leaderboardDialogActive, setLeaderboardDialogActive } = useApplicationStore();
 
 	const [activeTab, setActiveTab] = useState<ActiveTab>("normal");
-	const [leaderboard, setLeaderboard] = useState<Array<Schema["Leaderboard"]["type"]>>([]);
+	const [activeLeaderboard, setActiveLeaderboard] = useState<Array<Schema["Leaderboard"]["type"]>>([]);
+
+	const [leaderboardCampaign, setLeaderboardCampaign] = useState<Array<Schema["Leaderboard"]["type"]>>([]);
+	const [leaderboardBossFight, setLeaderboardBossFight] = useState<Array<Schema["Leaderboard"]["type"]>>([]);
+	const [leaderboardSurvival, setLeaderboardSurvival] = useState<Array<Schema["Leaderboard"]["type"]>>([]);
 	// console.log(leaderboard);
 
 
@@ -49,17 +53,26 @@ const Leaderboard = () => {
 		client.models.Leaderboard.observeQuery().subscribe({
 			next: (data,) => {
 				const sorted = data.items.sort((a, b) => a.time - b.time);
-				const survivalData = data.items.filter((item) => item.mode === "survival");
+
+				// Campaign Leaderboard
+				const campaignData = sorted.filter((item) => item.mode === "normal");
+				setLeaderboardCampaign([...campaignData]);
+				setActiveLeaderboard([...campaignData]);
+
+				// Boss Fight Leaderboard
+				const bossFightData = sorted.filter((item) => item.mode === "bossFight");
+				setLeaderboardBossFight([...bossFightData]);
+
+				// Survival Leaderboard
+				const survivalData = sorted.filter((item) => item.mode === "survival");
 				const survivalDataByRound = survivalData.sort((a, b) => {
 					if (a.round === null && b.round === null) return 0; // Both are null
 					if (a.round === null) return 1; // `a.round` is null, push it to the end
 					if (b.round === null) return -1; // `b.round` is null, push it to the end
-					return a.round - b.round; // Compare normally if both are numbers
+					return b.round - a.round; // Compare normally if both are numbers
 				});
-
-				const survivalDataSorted = survivalDataByRound.sort((a, b) => a.time - b.time);
-				console.log(survivalDataSorted)
-				setLeaderboard([...sorted]);
+				// const survivalDataSorted = survivalDataByRound.sort((a, b) => a.time - b.time);
+				setLeaderboardSurvival([...survivalDataByRound]);
 			},
 		});
 	}
@@ -68,6 +81,25 @@ const Leaderboard = () => {
 	useEffect(() => {
 		fetchLeaderboard();
 	}, []);
+
+
+	const handleChangeActiveLeaderboard = (activeTab: ActiveTab) => {
+		setActiveTab(activeTab);
+
+		switch (activeTab) {
+			case "normal":
+				setActiveLeaderboard(leaderboardCampaign);
+				break;
+
+			case "bossFight":
+				setActiveLeaderboard(leaderboardBossFight);
+				break;
+
+			case "survival":
+				setActiveLeaderboard(leaderboardSurvival);
+				break;
+		}
+	}
 
 
 	// async function handleDeleteLeaderboardEntry(id: any) {
@@ -81,8 +113,8 @@ const Leaderboard = () => {
 			userId: "d6c3ac96-e8c9-4016-9eab-42d753c75311",
 			username: "DeadShot",
 			mode: "survival",
-			time: 120,
-			round: 2
+			time: 140,
+			round: 4
 		});
 	}
 
@@ -103,9 +135,9 @@ const Leaderboard = () => {
 					</Button>
 					<h3 className="font-orbitron text-xl tracking-wider">Leaderboard</h3>
 					<div className="bg-secondary rounded-full p-1 ml-auto">
-						<button className={`${styles.button} ${activeTab === "normal" && styles.activeButton}`} onClick={() => setActiveTab("normal")}>Normal Mode</button>
-						<button className={`${styles.button} ${activeTab === "bossFight" && styles.activeButton}`} onClick={() => setActiveTab("bossFight")}>Boss Fight</button>
-						<button className={`${styles.button} ${activeTab === "survival" && styles.activeButton}`} onClick={() => setActiveTab("survival")}>Survival</button>
+						<button className={`${styles.button} ${activeTab === "normal" && styles.activeButton}`} onClick={() => handleChangeActiveLeaderboard("normal")}>Campaign</button>
+						<button className={`${styles.button} ${activeTab === "bossFight" && styles.activeButton}`} onClick={() => handleChangeActiveLeaderboard("bossFight")}>Boss Fight</button>
+						<button className={`${styles.button} ${activeTab === "survival" && styles.activeButton}`} onClick={() => handleChangeActiveLeaderboard("survival")}>Survival</button>
 					</div>
 				</div>
 
@@ -124,13 +156,12 @@ const Leaderboard = () => {
 				{/* LEADERBOARD ENTRIES */}
 				<ScrollArea className="h-[calc(100vh_-_21rem)] px-4">
 					<div className="space-y-2">
-						{leaderboard.filter((item) => item.mode === activeTab).map((item, index) => (
-							<div key={index} className={`grid ${activeTab === "survival" ? "grid-cols-[4rem_1fr_3rem_10rem]" : "grid-cols-[4rem_1fr_10rem]"}  items-center border px-4 py-2 rounded-xl text-sm`}>
+						{activeLeaderboard.map((item, index) => (
+							<div key={item.id} className={`grid ${activeTab === "survival" ? "grid-cols-[4rem_1fr_3rem_10rem]" : "grid-cols-[4rem_1fr_10rem]"}  items-center border px-4 py-2 rounded-xl text-sm`}>
 								<div>#{index + 1}</div>
 								<div>{item.username}</div>
 								{activeTab === "survival" && <div>{item.round}</div>}
 								<div className="text-right">{formatTime(item.time)}</div>
-								{/* <button onClick={() => handleDeleteLeaderboardEntry(item.id)}>Delete</button> */}
 							</div>
 						))}
 					</div>

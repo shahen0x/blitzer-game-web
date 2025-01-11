@@ -33,7 +33,7 @@ const SurvivalSubmitToLeaderboard: FC<SurvivalSubmitToLeaderboardProps> = ({ add
 		return () => removeEventListener("SubmitSurvivalData", handleSubmitEvent);
 	}, [addEventListener, removeEventListener, handleSubmitEvent]);
 
-	console.log(submissionData)
+	// console.log(submissionData)
 
 
 	function handleExitGame() {

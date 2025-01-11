@@ -9,6 +9,7 @@ import useGenerateAudio from "../../hooks/use-generate-audio";
 
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
 import { BorderBeam } from "../ui/border-beam";
+import { useSurvivalModeStore } from "@/store/use-survival-mode-store";
 
 
 interface OverlordDialogProps {
@@ -24,6 +25,7 @@ const OverlordDialog: FC<OverlordDialogProps> = ({ type, isTriggered, setIsTrigg
 	const [playVoiceline, setPlayVoiceline] = useState<boolean>(false);
 
 	const { menuDeathActive } = useApplicationStore();
+	// const {} = useSurvivalModeStore();
 	const { pickVoiceline, audio, setAudio, audioStopped, setAudioStopped } = useOverlordStore();
 	const { generateAudio } = useGenerateAudio();
 
