@@ -1,8 +1,8 @@
-import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
+import useOverlordStore from "@/store/use-overlord-store";
 
 const useGenerateAudio = () => {
 
-	const { audio: storedAudio, setAudio, stopOverlordAudio } = useOverlordStore();
+	const { setAudio, stopOverlordAudio } = useOverlordStore();
 
 	const generateAudio = async (
 		text: string,
@@ -26,8 +26,7 @@ const useGenerateAudio = () => {
 			const audioUrl = URL.createObjectURL(audioBlob);
 			const audio = new Audio(audioUrl);
 
-			const stopped = stopOverlordAudio();
-			// console.log("🎸🎸🎸", storedAudio);
+			stopOverlordAudio();
 
 			// Wait for audio to be loaded before playing
 			await new Promise((resolve, reject) => {

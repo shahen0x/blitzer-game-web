@@ -28,20 +28,17 @@ import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
 export default function App() {
 
 	// Hooks
-
 	useFullscreen();
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { setContainerRef } = useRefStore();
 	const { setLevels } = useDataStore();
 
 
-
-	// Generate AI Overlord's voicelines
+	// Overlord's voicelines
 	const hasRun = useRef(false);
 	const { generateVoicelines, audio } = useOverlordStore();
 	const [overlordDialogActive, setOverlordDialogActive] = useState(false);
 	const [voiceEventSelected, setVoiceEventSelected] = useState<VoicelineType>("spawn");
-	console.log("🎸🎸🎸", audio);
 
 
 
@@ -80,12 +77,12 @@ export default function App() {
 
 
 	// Generate AI Overlord's voicelines
-	// useEffect(() => {
-	// 	if (hasRun.current) return;
-	// 	hasRun.current = true;
+	useEffect(() => {
+		if (hasRun.current) return;
+		hasRun.current = true;
 
-	// 	generateVoicelines();
-	// }, []);
+		generateVoicelines();
+	}, []);
 
 
 	// Overlord Voiceline Events

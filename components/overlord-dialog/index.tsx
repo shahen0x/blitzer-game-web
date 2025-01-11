@@ -1,18 +1,14 @@
 "use client";
 
-import { FC, use, useCallback, useEffect, useRef, useState } from "react";
-
-
-
-import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
+import { FC, useEffect, useState } from "react";
+import Image from "next/image";
 
 import { useApplicationStore } from "@/store/use-application-store";
-import Image from "next/image";
-import { BorderBeam } from "../ui/border-beam";
-import usePickVoicelines from "./use-pick-voicelines";
-import useGenerateVoicelines from "./use-generate-voicelines";
-import useGenerateAudio from "./use-generate-audio";
 import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
+import useGenerateAudio from "../../hooks/use-generate-audio";
+
+import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
+import { BorderBeam } from "../ui/border-beam";
 
 
 interface OverlordDialogProps {
@@ -76,8 +72,7 @@ const OverlordDialog: FC<OverlordDialogProps> = ({ type, isTriggered, setIsTrigg
 
 			<div className="w-full backdrop-blur-sm bg-black/60 rounded-xl px-4 py-2 font-orbitron">
 				<BorderBeam size={100} colorFrom="#dc2626" colorTo="#f87171" borderWidth={2} duration={5} />
-				{voiceLine || "I am the Overlord!"}
-				{/* <button onClick={pause}>Pause</button> */}
+				{voiceLine}
 			</div>
 
 		</div>
