@@ -66,7 +66,7 @@ const OverlordDialog: FC<OverlordDialogProps> = ({ type, isTriggered, setIsTrigg
 
 	return playVoiceline ? (
 		<div className={`
-			absolute max-w-96 flex items-center gap-4 cursor-default select-none left-10 bottom-64 ${menuDeathActive ? "z-[100]" : "z-40"}`}>
+			absolute z-[100] left-10 bottom-64 max-w-96 flex items-center gap-4 cursor-default select-none `}>
 
 			<figure className="shrink-0 overflow-hidden w-20 h-20 rounded-xl bg-white/50 border-2 border-red-600 shadow-md">
 				<Image src="/overlord.jpg" width={200} height={200} priority quality={100} alt="AI Overlord" className="w-auto h-auto" onDragStart={(e) => e.preventDefault()} />
