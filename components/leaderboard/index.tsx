@@ -23,7 +23,7 @@ import { StarsBackground } from "../background/stars";
 import { ChevronLeft } from "lucide-react";
 
 
-type ActiveTab = "normal" | "bossFight";
+type ActiveTab = "normal" | "bossFight" | "survival";
 
 
 const Leaderboard = () => {
@@ -32,6 +32,7 @@ const Leaderboard = () => {
 
 	const [activeTab, setActiveTab] = useState<ActiveTab>("normal");
 	const [leaderboard, setLeaderboard] = useState<Array<Schema["Leaderboard"]["type"]>>([]);
+	// console.log(leaderboard);
 
 
 	// COMMON STYLES
@@ -48,6 +49,16 @@ const Leaderboard = () => {
 		client.models.Leaderboard.observeQuery().subscribe({
 			next: (data,) => {
 				const sorted = data.items.sort((a, b) => a.time - b.time);
+				const survivalData = data.items.filter((item) => item.mode === "survival");
+				const survivalDataByRound = survivalData.sort((a, b) => {
+					if (a.round === null && b.round === null) return 0; // Both are null
+					if (a.round === null) return 1; // `a.round` is null, push it to the end
+					if (b.round === null) return -1; // `b.round` is null, push it to the end
+					return a.round - b.round; // Compare normally if both are numbers
+				});
+
+				const survivalDataSorted = survivalDataByRound.sort((a, b) => a.time - b.time);
+				console.log(survivalDataSorted)
 				setLeaderboard([...sorted]);
 			},
 		});
@@ -64,6 +75,17 @@ const Leaderboard = () => {
 	// }
 
 
+
+	async function createEntry() {
+		const { errors } = await client.models.Leaderboard.create({
+			userId: "d6c3ac96-e8c9-4016-9eab-42d753c75311",
+			username: "DeadShot",
+			mode: "survival",
+			time: 120,
+			round: 2
+		});
+	}
+
 	return (
 		<Dialog
 			open={leaderboardDialogActive}
@@ -79,29 +101,34 @@ const Leaderboard = () => {
 					<Button variant={"outline"} size={"icon"} className="mr-4" onClick={() => setLeaderboardDialogActive(false)}>
 						<ChevronLeft />
 					</Button>
-					<h3 className="font-orbitron text-2xl tracking-wider">Leaderboard</h3>
+					<h3 className="font-orbitron text-xl tracking-wider">Leaderboard</h3>
 					<div className="bg-secondary rounded-full p-1 ml-auto">
 						<button className={`${styles.button} ${activeTab === "normal" && styles.activeButton}`} onClick={() => setActiveTab("normal")}>Normal Mode</button>
 						<button className={`${styles.button} ${activeTab === "bossFight" && styles.activeButton}`} onClick={() => setActiveTab("bossFight")}>Boss Fight</button>
+						<button className={`${styles.button} ${activeTab === "survival" && styles.activeButton}`} onClick={() => setActiveTab("survival")}>Survival</button>
 					</div>
 				</div>
 
 				{/* LEADERBOARD TABLE HEAD */}
 				<div className="mb-4 px-4">
-					<div className="grid grid-cols-[4rem_1fr_6rem] text-sm text-muted-foreground border px-4 py-2 rounded-xl bg-secondary/20">
+					<div className={`grid text-sm text-muted-foreground border px-4 py-2 rounded-xl bg-secondary/20 ${activeTab === "survival" ? "grid-cols-[4rem_1fr_7rem_6rem]" : "grid-cols-[4rem_1fr_6rem]"}`}>
 						<div>Rank</div>
 						<div>Player</div>
+						{activeTab === "survival" && <div>Rounds</div>}
 						<div className="text-right">Time</div>
 					</div>
 				</div>
+				{/* <button onClick={createEntry}>Create Entry</button> */}
+
 
 				{/* LEADERBOARD ENTRIES */}
 				<ScrollArea className="h-[calc(100vh_-_21rem)] px-4">
 					<div className="space-y-2">
 						{leaderboard.filter((item) => item.mode === activeTab).map((item, index) => (
-							<div key={index} className="grid grid-cols-[4rem_1fr_10rem] items-center border px-4 py-2 rounded-xl text-sm">
+							<div key={index} className={`grid ${activeTab === "survival" ? "grid-cols-[4rem_1fr_3rem_10rem]" : "grid-cols-[4rem_1fr_10rem]"}  items-center border px-4 py-2 rounded-xl text-sm`}>
 								<div>#{index + 1}</div>
 								<div>{item.username}</div>
+								{activeTab === "survival" && <div>{item.round}</div>}
 								<div className="text-right">{formatTime(item.time)}</div>
 								{/* <button onClick={() => handleDeleteLeaderboardEntry(item.id)}>Delete</button> */}
 							</div>
