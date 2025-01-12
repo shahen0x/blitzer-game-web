@@ -123,7 +123,7 @@ const Leaderboard = () => {
 		<Dialog
 			open={leaderboardDialogActive}
 			onOpenChange={setLeaderboardDialogActive}
-			className="overflow-hidden max-w-xl h-[calc(100vh_-_10rem)]"
+			className="overflow-hidden max-w-2xl h-[calc(100vh_-_10rem)]"
 		>
 			<StarsBackground className="absolute z-0" />
 
@@ -134,7 +134,7 @@ const Leaderboard = () => {
 					<Button variant={"outline"} size={"icon"} className="mr-4" onClick={() => setLeaderboardDialogActive(false)}>
 						<ChevronLeft />
 					</Button>
-					<h3 className="font-orbitron text-xl tracking-wider">Leaderboard</h3>
+					<h3 className="font-orbitron text-xl tracking-wider">Leaderboards</h3>
 					<div className="bg-secondary rounded-full p-1 ml-auto">
 						<button className={`${styles.button} ${activeTab === "normal" && styles.activeButton}`} onClick={() => handleChangeActiveLeaderboard("normal")}>Campaign</button>
 						<button className={`${styles.button} ${activeTab === "bossFight" && styles.activeButton}`} onClick={() => handleChangeActiveLeaderboard("bossFight")}>Boss Fight</button>
