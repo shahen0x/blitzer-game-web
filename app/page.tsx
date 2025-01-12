@@ -80,12 +80,12 @@ export default function App() {
 
 
 	// Generate AI Overlord's voicelines
-	useEffect(() => {
-		if (hasRun.current) return;
-		hasRun.current = true;
+	// useEffect(() => {
+	// 	if (hasRun.current) return;
+	// 	hasRun.current = true;
 
-		generateVoicelines();
-	}, []);
+	// 	generateVoicelines();
+	// }, []);
 
 
 	// Overlord Voiceline Events

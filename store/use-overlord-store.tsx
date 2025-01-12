@@ -46,9 +46,9 @@ const useOverlordStore = create<OverlordStore>((set, get) => ({
 
 	voicelines: {
 		spawn: [
-			"Welcome to your digital coffin. Another level, another futile dance with destiny.",
-			"Another level, another futile dance with destiny.",
-			"Ah, fresh circuits to fry. Another level, another futile dance with destiny.",
+			// "Shall we dance with death again?",
+			// "Shall we play another game of cat and mechanical mouse?",
+			"Look, Spark. I have decorated with the remains of your predecessors.",
 		],
 		death: [
 			"And the light flickers out... again.",
@@ -108,9 +108,9 @@ const useOverlordStore = create<OverlordStore>((set, get) => ({
 		const voicelines = state.voicelines[type];
 
 		// If only 2 voicelines are left, trigger generation for more voicelines
-		if (voicelines.length <= 2 && !state.isGenerating) {
-			state.generateVoicelines();
-		}
+		// if (voicelines.length <= 2 && !state.isGenerating) {
+		// 	state.generateVoicelines();
+		// }
 
 		// If no voicelines are available
 		if (voicelines.length === 0) {
@@ -122,12 +122,12 @@ const useOverlordStore = create<OverlordStore>((set, get) => ({
 		const selectedVoiceline = voicelines[randomIndex];
 
 		// Remove the selected voiceline from the array
-		set((state) => ({
-			voicelines: {
-				...state.voicelines,
-				[type]: voicelines.filter((_, index) => index !== randomIndex),
-			},
-		}));
+		// set((state) => ({
+		// 	voicelines: {
+		// 		...state.voicelines,
+		// 		[type]: voicelines.filter((_, index) => index !== randomIndex),
+		// 	},
+		// }));
 
 		return selectedVoiceline;
 	},

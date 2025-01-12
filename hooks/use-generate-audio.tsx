@@ -21,12 +21,16 @@ const useGenerateAudio = () => {
 			if (!response.ok) {
 				throw new Error('Failed to generate speech');
 			}
+			console.log("Generating voice..");
 
 			const audioBlob = await response.blob();
 			const audioUrl = URL.createObjectURL(audioBlob);
 			const audio = new Audio(audioUrl);
 
-			stopOverlordAudio();
+			console.log("Generated voice", audio);
+
+
+			// stopOverlordAudio();
 
 			// Wait for audio to be loaded before playing
 			await new Promise((resolve, reject) => {
@@ -35,6 +39,7 @@ const useGenerateAudio = () => {
 
 				// Handle successful loading
 				audio.oncanplaythrough = () => {
+					console.log("Playing voice..");
 					if (oncanplaythrough) {
 						oncanplaythrough();
 					}

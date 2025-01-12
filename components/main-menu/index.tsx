@@ -18,6 +18,7 @@ import { signOut } from "aws-amplify/auth";
 import { useRouter } from "next/navigation";
 import { useSurvivalModeStore } from "@/store/use-survival-mode-store";
 import useLevelGenerator from "@/hooks/use-level-generator";
+import AIRecording from "../ai-recording";
 
 
 
@@ -128,57 +129,10 @@ const MainMenu: FC<MainMenuProps> = ({
 
 
 	return (
-		<div className="fixed top-0 left-0 z-40 w-2/3 h-full flex justify-center items-center">
+		<div className="fixed top-0 left-0 z-40 w-2/4 h-full flex justify-center items-center">
 
 			<div className="relative z-30 flex flex-col justify-center items-center space-y-8">
-				<Image src="/logo.png" alt="logo" width={720} height={215} className="w-auto h-auto max-w-xl relative z-50" priority />
-
-				{showTutorial &&
-					<div className="p-6 bg-background/90 rounded-xl text-center">
-						<p className="mb-4 text-muted-foreground">Since this is your first time playing, we recommend <br /> you start with the tutorial.</p>
-						<Button variant={"default"} onClick={handleStartTutorial} tabIndex={-1}>Start Tutorial</Button>
-					</div>
-				}
-
-				{!showTutorial &&
-					<>
-						<MainMenuSection title="Normal Mode">
-							<MainMenuSectionPrimary>
-								{/* <MainMenuBtn onClick={handleStartFootageScene} title="Play Campaign" /> */}
-								<MainMenuBtn onClick={handleStartNormalMode} title="Play Campaign" />
-							</MainMenuSectionPrimary>
-
-							<MainMenuSectionSecondary>
-								<MainMenuBtn onClick={handleStartTutorial} title="Tutorial" />
-								<MainMenuBtn onClick={handleStartBossFightMode} title="Boss Fight" />
-							</MainMenuSectionSecondary>
-						</MainMenuSection>
-
-
-						<MainMenuSection title="AI Generated Levels">
-							<MainMenuSectionPrimary>
-								<MainMenuBtn onClick={handleStartSurvivalMode} title="Survival Mode" />
-							</MainMenuSectionPrimary>
-							<MainMenuSectionSecondary>
-								<MainMenuBtn onClick={() => setIsLevelGeneratorActive(true)} title="Generate" />
-								<MainMenuBtn onClick={() => setLevelBrowserActive(true)} title="Browse" />
-
-							</MainMenuSectionSecondary>
-						</MainMenuSection>
-
-
-						<MainMenuSection title="Other">
-							<MainMenuSectionPrimary>
-								<MainMenuBtn onClick={() => setLeaderboardDialogActive(true)} title="Leaderboards" />
-							</MainMenuSectionPrimary>
-
-							<MainMenuSectionSecondary>
-								<MainMenuBtn onClick={() => setCreditsDialogActive(true)} title="Credits" />
-								<MainMenuBtn onClick={handleSignOut} title="Sign Out" />
-							</MainMenuSectionSecondary>
-						</MainMenuSection>
-					</>
-				}
+				<AIRecording />
 			</div>
 		</div>
 	)
