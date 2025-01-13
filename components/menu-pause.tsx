@@ -15,6 +15,7 @@ import Dialog from "./ui/dialog";
 import { Button } from "./ui/button";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
+import { useLevelUploaderStore } from "@/store/use-level-uploader-store";
 
 
 interface MenuPause {
@@ -40,6 +41,7 @@ const MenuPause: FC<MenuPause> = ({
 
 	// Store
 	const { menuPauseActive, setMenuPauseActive, gameModeActive } = useApplicationStore();
+	const { setHasUploadedLevel } = useLevelUploaderStore();
 	const { pauseAudio, resumeAudio, stopOverlordAudio } = useOverlordStore();
 
 
@@ -121,7 +123,10 @@ const MenuPause: FC<MenuPause> = ({
 
 		const actions = {
 			[ConfirmationAction.Restart]: () => sendMessage("UICanvas", "RestartLevel"),
-			[ConfirmationAction.Exit]: () => sendMessage("UICanvas", "ExitToMainMenu")
+			[ConfirmationAction.Exit]: () => {
+				sendMessage("UICanvas", "ExitToMainMenu");
+				setHasUploadedLevel(false);
+			}
 		};
 
 		setMenuPauseActive(false);

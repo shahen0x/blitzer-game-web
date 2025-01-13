@@ -8,6 +8,7 @@ import { client } from "../amplify/amplify-client-config";
 import { fetchUserAttributes } from "@aws-amplify/auth";
 import { uploadData } from 'aws-amplify/storage';
 import { compressImage } from "@/lib/compress-image";
+import { useLevelUploaderStore } from "@/store/use-level-uploader-store";
 
 interface LevelUploaderProps {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
@@ -22,6 +23,7 @@ const LevelUploader: FC<LevelUploaderProps> = ({
 }) => {
 
 	const { gameModeActive, generatedLevelData, customGameLaunchedFrom } = useApplicationStore();
+	const { hasUploadedLevel, setHasUploadedLevel } = useLevelUploaderStore();
 	const [username, setUsername] = useState<string | undefined>(undefined);
 
 
@@ -35,8 +37,12 @@ const LevelUploader: FC<LevelUploaderProps> = ({
 
 
 	const handleExecuteFromEvent = useCallback(() => {
+		// If level has already been uploaded, don't execute (for when player is restarting level)
+		if (hasUploadedLevel) return console.log("❌ Level has already been uploaded.");
+
 		if (gameModeActive === "custom" && customGameLaunchedFrom === "ai-generator") {
 			handleUploadLevel();
+			setHasUploadedLevel(true);
 		}
 	}, [handleUploadLevel]);
 
@@ -60,7 +66,7 @@ const LevelUploader: FC<LevelUploaderProps> = ({
 					path,
 					data: blob,
 				}).result.then((image) => {
-					console.log(image.path);
+					console.log("✅ Level uploaded successfully!");
 					client.models.AiLevel.create({
 						grid: JSON.stringify(generatedLevelData || fallbackLevel),
 						generatedBy: username || "Unknown",
