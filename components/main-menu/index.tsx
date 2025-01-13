@@ -18,6 +18,8 @@ import { signOut } from "aws-amplify/auth";
 import { useRouter } from "next/navigation";
 import { useSurvivalModeStore } from "@/store/use-survival-mode-store";
 import useLevelGenerator from "@/hooks/use-level-generator";
+import { useLevelsStore } from "@/store/use-level-store";
+import { resolveHttpAuthRuntimeConfig } from "@aws-sdk/client-polly/dist-types/auth/httpAuthExtensionConfiguration";
 
 
 
@@ -56,6 +58,7 @@ const MainMenu: FC<MainMenuProps> = ({
 
 	const { gridData, setGridData } = useSurvivalModeStore();
 	const { generateLevel } = useLevelGenerator();
+	const { levels, getRandomLevelsGrid } = useLevelsStore();
 
 
 	// Force first time players to play the tutorial
@@ -90,6 +93,26 @@ const MainMenu: FC<MainMenuProps> = ({
 		sendMessage("MainMenuManager", "StartNormalMode");
 	}
 
+	function handleStartCampaignMode() {
+		setMainMenuActive(false);
+		setGameModeActive('normal');
+
+		const randomLevels = getRandomLevelsGrid(3);
+
+		// If no levels are found, use fallback levels
+		if (randomLevels === undefined) {
+			sendMessage("MainMenuManager", "StartNormalMode");
+			return;
+		}
+
+		for (let i = 0; i < randomLevels.length; i++) {
+			randomLevels[i] = `{grid: ${randomLevels[i]}}`;
+		}
+		const playlist = { playlist: randomLevels };
+
+		sendMessage("MainMenuManager", "StartCampaignMode", JSON.stringify(playlist));
+	}
+
 	function handleStartTutorial() {
 		setMainMenuActive(false);
 		setGameModeActive('tutorial');
@@ -106,11 +129,17 @@ const MainMenu: FC<MainMenuProps> = ({
 	const handleStartSurvivalMode = async () => {
 		setMainMenuActive(false);
 		setGameModeActive('survival');
-		sendMessage("MainMenuManager", "StartSurvivalMode", `{grid: ${gridData}}`);
 
-		// PreGenerate a new AI level
-		const generatedLevel = await generateLevel();
-		if (generatedLevel) setGridData(generatedLevel);
+		if (levels && levels.length > 0) {
+			// Get random level from existing level library
+			const fallbackLevel = "[[0,0,0,0,2,1,4,1,0,0,0,0,2,1,0,0,0,2,0,0],[0,2,3,1,0,0,0,5,1,2,0,3,1,4,1,2,0,1,0,0],[0,8,7,2,0,2,0,0,0,1,0,1,0,0,0,1,4,2,0,0],[0,1,0,1,4,1,2,0,0,5,1,2,0,2,3,1,0,6,1,0],[1,1,0,2,0,0,6,1,2,1,0,0,0,1,0,4,1,0,2,1],[0,2,0,1,3,0,0,0,0,4,1,3,0,5,0,0,2,0,0,0],[0,1,4,2,1,2,0,2,0,0,0,1,2,1,6,1,0,0,0,0],[0,3,0,0,0,5,1,1,2,0,0,0,0,0,2,5,1,1,0,0],[0,2,0,0,0,1,0,0,6,1,2,0,0,0,1,0,0,2,0,0]]";
+			const randomLevel = getRandomLevelsGrid(1);
+			sendMessage("MainMenuManager", "StartSurvivalMode", `{grid: ${randomLevel == undefined ? fallbackLevel : randomLevel}}`);
+
+			// PreGenerate a new AI level
+			const generatedLevel = await generateLevel();
+			if (generatedLevel) setGridData(generatedLevel);
+		}
 	}
 
 
@@ -145,7 +174,7 @@ const MainMenu: FC<MainMenuProps> = ({
 						<MainMenuSection title="Normal Mode">
 							<MainMenuSectionPrimary>
 								{/* <MainMenuBtn onClick={handleStartFootageScene} title="Play Campaign" /> */}
-								<MainMenuBtn onClick={handleStartNormalMode} title="Play Campaign" />
+								<MainMenuBtn onClick={handleStartCampaignMode} title="Play Campaign" />
 							</MainMenuSectionPrimary>
 
 							<MainMenuSectionSecondary>

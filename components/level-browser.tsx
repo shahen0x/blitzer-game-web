@@ -17,6 +17,7 @@ import Dialog from "./ui/dialog";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { ChevronLeft, LoaderCircle } from "lucide-react";
+import { useLevelsStore } from "@/store/use-level-store";
 
 
 type AiLevelWithCoverImage = Schema["AiLevel"]["type"] & {
@@ -34,7 +35,7 @@ const LevelBrowser: FC<LevelBrowserProps> = ({ sendMessage }) => {
 
 	// States
 	const { levelBrowserActive, setLevelBrowserActive, setGameModeActive, setCustomGameLaunchedFrom, setMainMenuActive } = useApplicationStore();
-	const [levels, setLevels] = useState<AiLevelWithCoverImage[]>([]);
+	const { levels, setLevels } = useLevelsStore();
 
 
 	// Fetch Levels

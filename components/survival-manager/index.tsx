@@ -1,5 +1,6 @@
 "use client";
 
+import useLevelGenerator from "@/hooks/use-level-generator";
 import { useSurvivalModeStore } from "@/store/use-survival-mode-store";
 import { FC, useCallback, useEffect, useState } from "react";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
@@ -14,6 +15,7 @@ const SurvivalManager: FC<SurvivalManagerProps> = ({ addEventListener, removeEve
 
 	const { gridData, setGridData } = useSurvivalModeStore();
 	const [startNewLevel, setStartNewLevel] = useState(false);
+	const { generateLevel } = useLevelGenerator();
 
 
 	const requestSurvivalLevel = useCallback(() => {
@@ -32,10 +34,18 @@ const SurvivalManager: FC<SurvivalManagerProps> = ({ addEventListener, removeEve
 		sendMessage("GameManager", "StartNewRound", `{grid: ${gridData}}`);
 	}
 
+	const handleGenerateNewLevel = async () => {
+		// PreGenerate a new AI level
+		const generatedLevel = await generateLevel();
+		if (generatedLevel) setGridData(generatedLevel);
+	}
+
+
 	useEffect(() => {
 		if (startNewLevel) {
 			handleStartNewRound();
 			setStartNewLevel(false);
+			handleGenerateNewLevel();
 		}
 	}, [startNewLevel]);
 
