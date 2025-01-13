@@ -47,20 +47,20 @@ const Leaderboard = () => {
 
 
 	// FETCH LEADERBOARD
-	//
-	function fetchLeaderboard() {
-		client.models.Leaderboard.observeQuery().subscribe({
-			next: (data,) => {
+	// Fetch leaderboard on first load to better experience.
+	useEffect(() => {
+		const sub = client.models.Leaderboard.observeQuery().subscribe({
+			next: (data) => {
 				const sorted = data.items.sort((a, b) => a.time - b.time);
 
 				// Campaign Leaderboard
 				const campaignData = sorted.filter((item) => item.mode === "normal");
-				setLeaderboardCampaign([...campaignData]);
-				setActiveLeaderboard([...campaignData]);
+				if (activeTab === "normal") setActiveLeaderboard(campaignData);
 
 				// Boss Fight Leaderboard
 				const bossFightData = sorted.filter((item) => item.mode === "bossFight");
 				setLeaderboardBossFight([...bossFightData]);
+				if (activeTab === "bossFight") setActiveLeaderboard(bossFightData);
 
 				// Survival Leaderboard
 				const survivalData = sorted.filter((item) => item.mode === "survival");
@@ -72,14 +72,12 @@ const Leaderboard = () => {
 				});
 				// const survivalDataSorted = survivalDataByRound.sort((a, b) => a.time - b.time);
 				setLeaderboardSurvival([...survivalDataByRound]);
+				if (activeTab === "survival") setActiveLeaderboard(survivalDataByRound);
 			},
 		});
-	}
 
-	// Fetch leaderboard on first load to better experience.
-	useEffect(() => {
-		fetchLeaderboard();
-	}, []);
+		return () => sub.unsubscribe();
+	}, [activeTab]);
 
 
 	const handleChangeActiveLeaderboard = (activeTab: ActiveTab) => {
@@ -110,11 +108,11 @@ const Leaderboard = () => {
 
 	async function createEntry() {
 		const { errors } = await client.models.Leaderboard.create({
-			userId: "lkiklihkh",
-			username: "DeadShot",
-			mode: "survival",
-			time: 1452.62,
-			round: 11
+			userId: "dasdaxxxxxxxx",
+			username: "DeadShotter2",
+			mode: "bossFight",
+			time: 1752.62,
+			// round: 13
 		});
 	}
 
@@ -140,7 +138,7 @@ const Leaderboard = () => {
 					</div>
 				</div>
 
-				{/* <button onClick={createEntry}>Create Entry</button> */}
+				<button onClick={createEntry}>Create Entry</button>
 
 				{/* LEADERBOARD TABLE HEAD */}
 				<div className="mb-4 px-4">
