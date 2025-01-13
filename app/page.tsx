@@ -23,7 +23,6 @@ import useFullscreen from "@/hooks/use-fullscreen";
 import OverlordDialog from "@/components/overlord-dialog";
 import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
 import SurvivalManager from "@/components/survival-manager";
-import { useSurvivalModeStore } from "@/store/use-survival-mode-store";
 import SurvivalSubmitToLeaderboard from "@/components/survival-manager/submit";
 
 

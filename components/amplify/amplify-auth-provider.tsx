@@ -1,3 +1,7 @@
+/**
+ * This is a wrapper component that allows the Amplify Authenticator component
+ */
+
 "use client";
 
 import { Authenticator } from "@aws-amplify/ui-react";
