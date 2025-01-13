@@ -12,14 +12,10 @@ import SubmitToLeaderboard from "@/components/leaderboard/submit";
 import Leaderboard from "@/components/leaderboard";
 import LevelBrowser from "@/components/level-browser";
 import LevelUploader from "@/components/level-generator/level-uploader";
-import { client } from "@/components/amplify/amplify-client-config";
-import { useDataStore } from "@/store/use-data-store";
-import { getUrl } from "aws-amplify/storage";
 import MenuPause from "@/components/menu-pause";
 import MenuDeath from "@/components/menu-death";
 import Debug from "@/components/debug";
 import Credits from "@/components/credits";
-import useFullscreen from "@/hooks/use-fullscreen";
 import OverlordDialog from "@/components/overlord-dialog";
 import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
 import SurvivalManager from "@/components/survival-manager";
@@ -36,10 +32,6 @@ export default function App() {
 
 
 	const { setContainerRef } = useRefStore();
-
-
-
-	const { setLevels } = useDataStore();
 
 
 	// Overlord's voicelines
@@ -157,6 +149,7 @@ export default function App() {
 			/>
 
 			<Leaderboard />
+
 			<SubmitToLeaderboard
 				addEventListener={addEventListener}
 				removeEventListener={removeEventListener}
