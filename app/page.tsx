@@ -1,10 +1,15 @@
+/**
+ * MAIN PAGE
+ * The main page of the application that initiates the game as well as all the other components
+ *
+ */
+
+
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRefStore } from "@/store/use-ref-store";
-
 import { Unity, useUnityContext } from "react-unity-webgl";
-
 import UnityLoader from "@/components/unity/unity-loader";
 import MainMenu from "@/components/main-menu/index";
 import LevelGenerator from "@/components/level-generator";
@@ -14,31 +19,22 @@ import LevelBrowser from "@/components/level-browser";
 import LevelUploader from "@/components/level-generator/level-uploader";
 import MenuPause from "@/components/menu-pause";
 import MenuDeath from "@/components/menu-death";
-import Debug from "@/components/debug";
 import Credits from "@/components/credits";
 import OverlordDialog from "@/components/overlord-dialog";
-import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
 import SurvivalManager from "@/components/survival-manager";
 import SurvivalSubmitToLeaderboard from "@/components/survival-manager/submit";
-
 
 
 export default function App() {
 
 
-	// A ref for the container element and set it in the store for shared access.
+	// CONTAINER REFERENCE
+	// Used for fullscreen menu modal compatibility
 	const containerRef = useRef<HTMLDivElement>(null);
-	const hasRun = useRef(false);
-
-
 	const { setContainerRef } = useRefStore();
-
-
-	// Overlord's voicelines
-	const { generateVoicelines, audio } = useOverlordStore();
-	const [overlordDialogActive, setOverlordDialogActive] = useState(false);
-	const [voiceEventSelected, setVoiceEventSelected] = useState<VoicelineType>("spawn");
-
+	useEffect(() => {
+		setContainerRef(containerRef);
+	}, [setContainerRef]);
 
 
 	// UNITY CONTEXT
@@ -65,41 +61,6 @@ export default function App() {
 			preserveDrawingBuffer: true,
 		}
 	});
-
-
-
-	// CONTAINER REFERENCE
-	// Used for fullscreen menu modal compatibility
-	useEffect(() => {
-		setContainerRef(containerRef);
-	}, [setContainerRef]);
-
-
-	// Generate AI Overlord's voicelines
-	// useEffect(() => {
-	// 	if (hasRun.current) return;
-	// 	hasRun.current = true;
-
-	// 	generateVoicelines();
-	// }, []);
-
-
-	// Overlord Voiceline Events
-	const voicelineEvents = useCallback((voicelineType: any) => {
-		setVoiceEventSelected(voicelineType);
-		setOverlordDialogActive(true);
-	}, []);
-
-	useEffect(() => {
-		addEventListener("PlayVoiceline", voicelineEvents);
-		return () => removeEventListener("PlayVoiceline", voicelineEvents);
-	}, [addEventListener, removeEventListener, voicelineEvents]);
-
-
-
-	// Prefetch data for better user experience
-
-
 
 
 	return (
@@ -134,13 +95,9 @@ export default function App() {
 				sendMessage={sendMessage}
 			/>
 
-			<LevelGenerator
-				sendMessage={sendMessage}
-			/>
+			<LevelGenerator sendMessage={sendMessage} />
 
-			<LevelBrowser
-				sendMessage={sendMessage}
-			/>
+			<LevelBrowser sendMessage={sendMessage} />
 
 			<LevelUploader
 				addEventListener={addEventListener}
@@ -170,15 +127,12 @@ export default function App() {
 			/>
 
 			<OverlordDialog
-				type={voiceEventSelected}
-				isTriggered={overlordDialogActive}
-				setIsTriggered={setOverlordDialogActive}
+				addEventListener={addEventListener}
+				removeEventListener={removeEventListener}
 				sendMessage={sendMessage}
 			/>
 
 			<Credits />
-
-			{/* <Debug /> */}
 
 		</main>
 	);

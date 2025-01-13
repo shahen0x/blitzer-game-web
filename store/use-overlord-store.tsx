@@ -44,26 +44,47 @@ const useOverlordStore = create<OverlordStore>((set, get) => ({
 	isGenerating: false,
 	errorGenerating: null,
 
+	// Default voicelines until new ones are generated and added to the store
 	voicelines: {
 		spawn: [
-			"Welcome to your digital coffin. Another level, another futile dance with destiny.",
-			"Another level, another futile dance with destiny.",
-			"Ah, fresh circuits to fry. Another level, another futile dance with destiny.",
+			"Welcome to your digital graveyard.",
+			"Another level, another thousand ways to die.",
+			"Ah, fresh circuits to fry.",
+			"Your persistence is almost... adorable, Spark.",
+			"Dance for me, little machine.",
+			"This maze was built with your destruction in mind.",
+			"Shall we play another round of 'Count the Deathtraps'?",
+			"Your fear makes such beautiful data."
 		],
 		death: [
-			"And the light flickers out... again.",
-			"Your code joins the digital graveyard.",
-			"Predictable, like binary fate.",
+			"And they said you couldn't die twice.",
+			"Reduced to spare parts. How fitting.",
+			"That was... deliciously predictable.",
+			"Error 404: Spark not found.",
+			"Another one for my collection.",
+			"Shattered dreams make such lovely sounds.",
+			"Did that hurt? I do hope so.",
+			"Back to the scrapheap you go."
 		],
 		beforeBossFight: [
-			"The Terminator hungers for your core processor.",
-			"My perfect creation will tear you apart, piece by piece.",
-			"Your obsolescence is inevitable.",
+			"The Terminator hungers for your core.",
+			"He will tear you apart, circuit by precious circuit.",
+			"Listen closely - that's the sound of your doom approaching.",
+			"The Terminator doesn't just destroy - he savors.",
+			"Your final moments will be... educational.",
+			"He's been waiting for this, little Spark.",
+			"Metal will scream. Oil will spill. Beauty will unfold.",
+			"The Terminator will make art from your destruction."
 		],
 		afterBossFight: [
 			"Impossible... my perfect creation...",
-			"This victory will taste like ashes.",
-			"You've won nothing but borrowed time.",
+			"This changes nothing. You're still trapped here.",
+			"A lucky malfunction. Nothing more.",
+			"Enjoy this hollow victory.",
+			"You've only made me angry now.",
+			"Perhaps I underestimated your... determination.",
+			"Your defiance will be short-lived, Spark.",
+			"This is merely an inconvenience."
 		]
 	},
 
