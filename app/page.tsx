@@ -29,15 +29,20 @@ import SurvivalSubmitToLeaderboard from "@/components/survival-manager/submit";
 
 export default function App() {
 
-	// Hooks
-	useFullscreen();
+
+	// A ref for the container element and set it in the store for shared access.
 	const containerRef = useRef<HTMLDivElement>(null);
+	const hasRun = useRef(false);
+
+
 	const { setContainerRef } = useRefStore();
+
+
+
 	const { setLevels } = useDataStore();
 
 
 	// Overlord's voicelines
-	const hasRun = useRef(false);
 	const { generateVoicelines, audio } = useOverlordStore();
 	const [overlordDialogActive, setOverlordDialogActive] = useState(false);
 	const [voiceEventSelected, setVoiceEventSelected] = useState<VoicelineType>("spawn");
@@ -72,19 +77,19 @@ export default function App() {
 
 
 	// CONTAINER REFERENCE
-	// Used for fullscreen compatibility
+	// Used for fullscreen menu modal compatibility
 	useEffect(() => {
 		setContainerRef(containerRef);
 	}, [setContainerRef]);
 
 
 	// Generate AI Overlord's voicelines
-	useEffect(() => {
-		if (hasRun.current) return;
-		hasRun.current = true;
+	// useEffect(() => {
+	// 	if (hasRun.current) return;
+	// 	hasRun.current = true;
 
-		generateVoicelines();
-	}, []);
+	// 	generateVoicelines();
+	// }, []);
 
 
 	// Overlord Voiceline Events
@@ -101,33 +106,7 @@ export default function App() {
 
 
 	// Prefetch data for better user experience
-	async function fetchLevels() {
-		client.models.AiLevel.observeQuery().subscribe({
-			next: async (data) => {
-				const levelsWithCovers = await Promise.all(
-					data.items
-						// Sort in descending order (newest first)
-						.sort((a, b) => {
-							return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-						})
-						// Map to add cover image URL from S3
-						.map(async (level) => {
-							if (level.cover) {
-								const coverUrl = await getUrl({ path: level.cover });
-								return { ...level, coverImage: coverUrl.url.href };
-							}
-							return level;
-						})
-				)
-				setLevels(levelsWithCovers);
-			},
-		});
-	}
 
-	useEffect(() => {
-		console.log("⚠️ fetching levels")
-		fetchLevels();
-	}, []);
 
 
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC } from "react";
+import { FC, useEffect, useRef } from "react";
 import { useApplicationStore } from "@/store/use-application-store";
 import { useDataStore } from "@/store/use-data-store";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
@@ -11,6 +11,8 @@ import { ScrollArea } from "../ui/scroll-area";
 import { ChevronLeft } from "lucide-react";
 
 import LevelCard from "./level-card";
+import { client } from "../amplify/amplify-client-config";
+import { getUrl } from "aws-amplify/storage";
 
 
 interface LevelBrowserProps {
@@ -19,8 +21,43 @@ interface LevelBrowserProps {
 
 const LevelBrowser: FC<LevelBrowserProps> = ({ sendMessage }) => {
 
+	// Only fetch levels once
+	const hasRun = useRef(false);
+
 	const { levelBrowserActive, setLevelBrowserActive } = useApplicationStore();
-	const { levels } = useDataStore();
+	const { levels, setLevels } = useDataStore();
+
+
+	async function fetchLevels() {
+		client.models.AiLevel.observeQuery().subscribe({
+			next: async (data) => {
+				const levelsWithCovers = await Promise.all(
+					data.items
+						// Sort in descending order (newest first)
+						.sort((a, b) => {
+							return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+						})
+						// Map to add cover image URL from S3
+						.map(async (level) => {
+							if (level.cover) {
+								const coverUrl = await getUrl({ path: level.cover });
+								return { ...level, coverImage: coverUrl.url.href };
+							}
+							return level;
+						})
+				)
+				setLevels(levelsWithCovers);
+			},
+		});
+	}
+
+	useEffect(() => {
+		// Only fetch levels once
+		if (hasRun.current) return;
+		hasRun.current = true;
+
+		fetchLevels();
+	}, []);
 
 	return (
 		<Dialog
