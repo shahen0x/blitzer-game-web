@@ -107,6 +107,7 @@ const OverlordDialog: FC<OverlordDialogProps> = ({ addEventListener, removeEvent
 		}
 	}, [audioStopped]);
 
+
 	// If game mode is not active, never show the AI Overlord dialog
 	if (gameModeActive === "none") return null;
 

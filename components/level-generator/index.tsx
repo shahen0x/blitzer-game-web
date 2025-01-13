@@ -4,7 +4,6 @@ import { FC, useEffect, useState } from "react";
 import { useApplicationStore } from "@/store/use-application-store";
 import Dialog from "../ui/dialog";
 import { Button } from "../ui/button";
-import { StarsBackground } from "../background/stars";
 import MorphingText from "../ui/morphing-text";
 import LevelLoader from "./level-loader";
 import { generateClient } from "aws-amplify/api";
@@ -157,7 +156,6 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 			onOpenChange={(generationStep === GenerationStep.Generating || generationStep === GenerationStep.Generated) ? () => { } : setIsLevelGeneratorActive}
 			className="max-w-5xl min-h-[calc(100vh_-_10rem)]"
 		>
-			<StarsBackground className="absolute z-0" />
 			<div className="relative z-10 h-full flex flex-col justify-center items-center space-y-10">
 
 				{generationStep === GenerationStep.StartScreen &&

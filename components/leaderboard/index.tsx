@@ -18,7 +18,6 @@ import { formatTime } from "@/lib/format-numbers";
 import Dialog from "../ui/dialog";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
-import { StarsBackground } from "../background/stars";
 
 import { ChevronLeft } from "lucide-react";
 
@@ -125,7 +124,6 @@ const Leaderboard = () => {
 			onOpenChange={setLeaderboardDialogActive}
 			className="overflow-hidden max-w-2xl h-[calc(100vh_-_10rem)]"
 		>
-			<StarsBackground className="absolute z-0" />
 
 			<div className="relative z-10">
 

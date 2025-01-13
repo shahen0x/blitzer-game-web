@@ -1,17 +1,19 @@
+/**
+ * CREDITS
+ * Displays game credits
+ * 
+ */
+
 "use client";
 
-import { FC } from "react";
-import Dialog from "../ui/dialog";
+import Dialog from "./ui/dialog";
 import { useApplicationStore } from "@/store/use-application-store";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import { ChevronLeft } from "lucide-react";
-import { Separator } from "../ui/separator";
+import { Separator } from "./ui/separator";
 
-interface CreditsProps {
 
-}
-
-const Credits: FC<CreditsProps> = () => {
+const Credits = () => {
 
 	const { creditsDialogActive, setCreditsDialogActive } = useApplicationStore();
 

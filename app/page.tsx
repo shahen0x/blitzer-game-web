@@ -10,7 +10,7 @@
 import { useEffect, useRef } from "react";
 import { useRefStore } from "@/store/use-ref-store";
 import { Unity, useUnityContext } from "react-unity-webgl";
-import UnityLoader from "@/components/unity/unity-loader";
+import UnityLoader from "@/components/unity-loader";
 import MainMenu from "@/components/main-menu/index";
 import LevelGenerator from "@/components/level-generator";
 import SubmitToLeaderboard from "@/components/leaderboard/submit";

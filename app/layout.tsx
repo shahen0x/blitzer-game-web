@@ -3,7 +3,7 @@ import { Saira } from "next/font/google";
 import type { Metadata } from "next";
 import ConfigureAmplifyClientSide from "@/components/amplify/amplify-client-config";
 import AmplifyAuthProvider from "@/components/amplify/amplify-auth-provider";
-import { StarsBackground } from "@/components/background/stars";
+import { StarsBackground } from "@/components/ui/stars-background";
 
 const saira = Saira({ subsets: ["latin"] });
 
