@@ -1,20 +1,28 @@
+/**
+ * PAUSE MENU
+ * Displays a pause menu with options to resume, restart, or exit to main menu
+ * 
+ */
+
 "use client";
 
 import { useApplicationStore } from "@/store/use-application-store";
 import { FC, useCallback, useEffect, useState } from "react";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
-import Dialog from "../ui/dialog";
-import { Button } from "../ui/button";
-import { Switch } from "../ui/switch";
-import { Label } from "../ui/label";
 import useFullscreen from "@/hooks/use-fullscreen";
 import useOverlordStore from "@/store/use-overlord-store";
+import Dialog from "./ui/dialog";
+import { Button } from "./ui/button";
+import { Switch } from "./ui/switch";
+import { Label } from "./ui/label";
+
 
 interface MenuPause {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
 	removeEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
 	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void;
 }
+
 
 enum ConfirmationAction {
 	None = "none",
@@ -23,27 +31,30 @@ enum ConfirmationAction {
 }
 
 
-
 const MenuPause: FC<MenuPause> = ({
 	addEventListener,
 	removeEventListener,
 	sendMessage
 }) => {
 
-	const { isFullscreen, toggleFullscreen } = useFullscreen();
 
+	// Store
+	const { menuPauseActive, setMenuPauseActive, gameModeActive } = useApplicationStore();
 	const { pauseAudio, resumeAudio, stopOverlordAudio } = useOverlordStore();
 
-	const { menuPauseActive, setMenuPauseActive, gameModeActive } = useApplicationStore();
+
+	// Hooks
+	const { isFullscreen, toggleFullscreen } = useFullscreen();
 
 
-
+	// Local States
 	const [sfx, setSfx] = useState(true);
 	const [music, setMusic] = useState(true);
 	const [confirmationActive, setConfirmationActive] = useState(false);
 	const [confirmationAction, setConfirmationAction] = useState<ConfirmationAction>(ConfirmationAction.None);
 
 
+	// Receive event to pause menu
 	const handleSetPauseMenu = useCallback((sfxMute: any, musicMute: any) => {
 		pauseAudio()
 		setMenuPauseActive(true);
@@ -57,7 +68,7 @@ const MenuPause: FC<MenuPause> = ({
 	}, [addEventListener, removeEventListener, handleSetPauseMenu]);
 
 
-
+	// Receive event to unpause menu
 	const handleUnpauseMenu = useCallback(() => {
 		resumeAudio();
 		setMenuPauseActive(false);
@@ -69,22 +80,25 @@ const MenuPause: FC<MenuPause> = ({
 	}, [addEventListener, removeEventListener, handleUnpauseMenu]);
 
 
+	// Close pause menu
 	function handleClosePauseMenu() {
 		setMenuPauseActive(false);
 		sendMessage("UICanvas", "TogglePauseGame")
 	}
 
+
+	// Mute SFX
 	function handleMuteSFX() {
 		setSfx(!sfx);
 		sendMessage("UICanvas", "ToggleSFXFromReact");
 	}
 
+
+	// Mute Music
 	function handleMuteMusic() {
 		setMusic(!music);
 		sendMessage("UICanvas", "ToggleMusicFromReact");
 	}
-
-
 
 
 	// CONFIRMATION
@@ -135,16 +149,19 @@ const MenuPause: FC<MenuPause> = ({
 					}
 					<span className="text-sm text-muted-foreground">
 						{!confirmationActive
-							? <>{gameModeActive === "normal" ? "Normal Mode" : gameModeActive === "bossFight" ? "Boss Fight" : gameModeActive === "tutorial" ? "Tutorial" : "AI Generated Level"}</>
+							? <>{gameModeActive === "normal" ? "Campaign Mode" : gameModeActive === "bossFight" ? "Boss Fight" : gameModeActive === "tutorial" ? "Tutorial" : gameModeActive === "survival" ? "Survival" : "AI Generated Level"}</>
 							: <>{confirmationAction === "restart" ? "Restart Game" : "Exit to main menu"}</>
 						}
 					</span>
 				</div>
+
 				{!confirmationActive &&
 					<>
 						<div className="space-y-3 outline-none">
 							<Button onClick={handleClosePauseMenu} variant={"secondary"} className="w-full shadow-none" tabIndex={-1}>Resume</Button>
-							<Button onClick={() => handleGameAction(ConfirmationAction.Restart)} variant={"secondary"} className="w-full" tabIndex={-1}>Restart</Button>
+							{gameModeActive !== "survival" && <Button onClick={() => handleGameAction(ConfirmationAction.Restart)} variant={"secondary"} className="w-full" tabIndex={-1}>
+								{gameModeActive === "normal" ? "Restart Checkpoint" : "Restart"}
+							</Button>}
 							<Button onClick={() => handleGameAction(ConfirmationAction.Exit)} variant={"secondary"} className="w-full" tabIndex={-1}>Exit to Main Menu</Button>
 						</div>
 
