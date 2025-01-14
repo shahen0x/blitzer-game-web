@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { useApplicationStore } from "@/store/use-application-store";
 import { Schema } from "@/amplify/data/resource";
 import { client } from "./amplify/amplify-client-config";
-import { formatTime } from "@/lib/format-numbers";
+import { formatTime } from "@/lib/format-time";
 import Dialog from "./ui/dialog";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";

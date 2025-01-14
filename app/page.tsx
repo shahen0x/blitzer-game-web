@@ -22,7 +22,7 @@ import MenuDeath from "@/components/menu-death";
 import Credits from "@/components/credits";
 import OverlordDialog from "@/components/overlord-dialog";
 import SurvivalManager from "@/components/survival-manager";
-import SurvivalSubmitToLeaderboard from "@/components/survival-manager/submit";
+import SurvivalSubmitToLeaderboard from "@/components/survival-manager/submit-to-leaderboard";
 
 
 export default function App() {

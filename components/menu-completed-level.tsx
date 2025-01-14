@@ -34,7 +34,6 @@ const MenuCompletedLevel: FC<MenuCompletedLevelProps> = ({ addEventListener, rem
 
 
 	// Local States
-	const [username, setUsername] = useState<string | undefined>(undefined);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submissionSuccess, setSubmissionSuccess] = useState(false);
 	const [submissionError, setSubmissionError] = useState(false);
@@ -42,6 +41,7 @@ const MenuCompletedLevel: FC<MenuCompletedLevelProps> = ({ addEventListener, rem
 
 
 	// Fetch user profile/username
+	const [username, setUsername] = useState<string | undefined>(undefined);
 	const { user } = useAuthenticator();
 
 	useEffect(() => {

@@ -5,12 +5,22 @@
  */
 
 
-export const formatTime = (timeInSeconds: number): string => {
+export const formatTime = (timeInSeconds: number, showNonZeroOnly: boolean = false): string => {
 	const hours = Math.floor(timeInSeconds / 3600);
 	const minutes = Math.floor((timeInSeconds % 3600) / 60);
 	const seconds = Math.floor(timeInSeconds % 60);
 	const milliseconds = Math.round((timeInSeconds % 1) * 100);
 	const pad = (num: number, length: number = 2): string => num.toString().padStart(length, '0');
 
-	return `${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s ${pad(milliseconds, 2)}ms`;
+	const parts = [
+		{ value: hours, unit: 'h' },
+		{ value: minutes, unit: 'm' },
+		{ value: seconds, unit: 's' },
+		{ value: milliseconds, unit: 'ms' },
+	];
+
+	// Filter out zero values if showNonZeroOnly is true
+	const filteredParts = showNonZeroOnly ? parts.filter(part => part.value > 0) : parts;
+
+	return filteredParts.map(part => `${pad(part.value)}${part.unit}`).join(' ');
 };

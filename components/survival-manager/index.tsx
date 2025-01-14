@@ -1,3 +1,9 @@
+/**
+ * SURVIVAL MODE MANAGER
+ * Generates new levels for each round and handles the game mode
+ * 
+ */
+
 "use client";
 
 import useLevelGenerator from "@/hooks/use-level-generator";
@@ -5,42 +11,49 @@ import { useSurvivalModeStore } from "@/store/use-survival-mode-store";
 import { FC, useCallback, useEffect, useState } from "react";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
 
+
 interface SurvivalManagerProps {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
 	removeEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
 	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void
 }
 
+
 const SurvivalManager: FC<SurvivalManagerProps> = ({ addEventListener, removeEventListener, sendMessage }) => {
 
+
+	// Global Store
 	const { gridData, setGridData } = useSurvivalModeStore();
+
+
+	// Local State
 	const [startNewLevel, setStartNewLevel] = useState(false);
+
+
+	// Hooks
 	const { generateLevel } = useLevelGenerator();
 
 
-	const requestSurvivalLevel = useCallback(() => {
+	// Listen for the start new level event
+	const receivedStartNewLevelEvent = useCallback(() => {
 		console.log("🔃 Requesting survival level...");
 		setStartNewLevel(true);
 	}, []);
 
 	useEffect(() => {
-		addEventListener("RequestSurvivalLevel", requestSurvivalLevel);
-		return () => removeEventListener("RequestSurvivalLevel", requestSurvivalLevel);
-	}, [addEventListener, removeEventListener, requestSurvivalLevel]);
+		addEventListener("RequestSurvivalLevel", receivedStartNewLevelEvent);
+		return () => removeEventListener("RequestSurvivalLevel", receivedStartNewLevelEvent);
+	}, [addEventListener, removeEventListener, receivedStartNewLevelEvent]);
 
 
-	const handleStartNewRound = () => {
-		// const level = "[[0,0,0,0,2,1,4,1,0,0,0,0,2,1,0,0,0,2,0,0],[0,2,3,1,0,0,0,5,1,2,0,3,1,4,1,2,0,1,0,0],[0,8,7,2,0,2,0,0,0,1,0,1,0,0,0,1,4,2,0,0],[0,1,0,1,4,1,2,0,0,5,1,2,0,2,3,1,0,6,1,0],[1,1,0,2,0,0,6,1,2,1,0,0,0,1,0,4,1,0,2,1],[0,2,0,1,3,0,0,0,0,4,1,3,0,5,0,0,2,0,0,0],[0,1,4,2,1,2,0,2,0,0,0,1,2,1,6,1,0,0,0,0],[0,3,0,0,0,5,1,1,2,0,0,0,0,0,2,5,1,1,0,0],[0,2,0,0,0,1,0,0,6,1,2,0,0,0,1,0,0,2,0,0]]";
-		sendMessage("GameManager", "StartNewRound", `{grid: ${gridData}}`);
-	}
-
+	// Generate a new AI level
 	const handleGenerateNewLevel = async () => {
-		// PreGenerate a new AI level
 		const generatedLevel = await generateLevel();
 		if (generatedLevel) setGridData(generatedLevel);
 	}
 
 
+	// Start a new round
 	useEffect(() => {
 		if (startNewLevel) {
 			handleStartNewRound();
@@ -49,13 +62,12 @@ const SurvivalManager: FC<SurvivalManagerProps> = ({ addEventListener, removeEve
 		}
 	}, [startNewLevel]);
 
+	const handleStartNewRound = () => {
+		sendMessage("GameManager", "StartNewRound", `{grid: ${gridData}}`);
+	}
 
 
-	return (
-		<>
-
-		</>
-	)
+	return null;
 }
 
 export default SurvivalManager;
