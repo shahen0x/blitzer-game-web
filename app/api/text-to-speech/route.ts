@@ -1,10 +1,23 @@
 import { NextResponse } from "next/server";
-import polly from "@/lib/aws";
-import { SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
+// import polly from "@/lib/aws";
+import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
+
+
+const polly = new PollyClient({
+	region: 'us-west-2',
+	credentials: {
+		accessKeyId: 'AKIA54L7OBTWT6SODZEP',
+		secretAccessKey: '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',
+	},
+});
 
 export async function POST(request: Request) {
 	try {
 		const { text } = await request.json();
+
+		if (!polly) {
+			throw new Error('Issue with Polly client', polly);
+		}
 
 		const voiceLine = `
 			<speak>
@@ -23,6 +36,10 @@ export async function POST(request: Request) {
 		});
 
 		const response = await polly.send(command);
+		if (!response) {
+			throw new Error('Issue with polly response: ', response);
+		}
+
 
 		// Convert AudioStream to Buffer
 		const audioBuffer = await response.AudioStream?.transformToByteArray();
