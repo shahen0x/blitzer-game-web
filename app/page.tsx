@@ -13,7 +13,7 @@ import { Unity, useUnityContext } from "react-unity-webgl";
 import UnityLoader from "@/components/unity-loader";
 import MainMenu from "@/components/main-menu/index";
 import LevelGenerator from "@/components/level-generator";
-import SubmitToLeaderboard from "@/components/leaderboard/submit";
+import MenuCompletedLevel from "@/components/menu-completed-level";
 import Leaderboard from "@/components/leaderboard";
 import LevelBrowser from "@/components/level-browser";
 import LevelUploader from "@/components/level-generator/level-uploader";
@@ -107,7 +107,7 @@ export default function App() {
 
 			<Leaderboard />
 
-			<SubmitToLeaderboard
+			<MenuCompletedLevel
 				addEventListener={addEventListener}
 				removeEventListener={removeEventListener}
 				sendMessage={sendMessage}

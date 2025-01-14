@@ -1,47 +1,48 @@
 /**
- * SUBMIT TO LEADERBOARD
- * This component is used to submit the player's time to the leaderboard.
+ * MENU COMPLETED LEVEL
+ * This component is shown when the player completes a level
+ * Based on the game mode it will submit their score to the 
+ * leaderboard or they can go to main menu.
+ * 
  */
 
 "use client";
 
 import { FC, useCallback, useEffect, useState } from "react";
-import Dialog from "../ui/dialog";
+import Dialog from "./ui/dialog";
 import { useApplicationStore } from "@/store/use-application-store";
-import Ripple from "../ui/ripple";
+import Ripple from "./ui/ripple";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
-import { client } from "../amplify/amplify-client-config";
+import { client } from "./amplify/amplify-client-config";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { useAuthenticator } from "@aws-amplify/ui-react";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 
 
-
-interface SubmitToLeaderboardProps {
+interface MenuCompletedLevelProps {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
 	removeEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
 	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void;
 }
 
-const SubmitToLeaderboard: FC<SubmitToLeaderboardProps> = ({
-	addEventListener,
-	removeEventListener,
-	sendMessage
-}) => {
 
-	const {
-		submitDialogActive,
-		setSubmitDialogActive,
-		gameModeActive
-	} = useApplicationStore();
+const MenuCompletedLevel: FC<MenuCompletedLevelProps> = ({ addEventListener, removeEventListener, sendMessage }) => {
 
-	const { user } = useAuthenticator();
+
+	// Global Store
+	const { submitDialogActive, setSubmitDialogActive, gameModeActive } = useApplicationStore();
+
+
+	// Local States
 	const [username, setUsername] = useState<string | undefined>(undefined);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [submissionSuccess, setSubmissionSuccess] = useState(false);
 	const [submissionError, setSubmissionError] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string>("An unknown error occured.");
 
+
+	// Fetch user profile/username
+	const { user } = useAuthenticator();
 
 	useEffect(() => {
 		fetchUserAttributes().then((user) => {
@@ -52,14 +53,27 @@ const SubmitToLeaderboard: FC<SubmitToLeaderboardProps> = ({
 	}, [submitDialogActive]);
 
 
+	// Receive the leaderboard submission event
+	const receivedSubmissionEvent = useCallback((time: any) => {
+		if (gameModeActive === "custom") return;
+		setSubmitDialogActive(true);
+		setIsSubmitting(true);
+		handleSubmitToLeaderboard(time);
+	}, [gameModeActive, username]);
 
-	const submitToDB = async (time: any) => {
+	useEffect(() => {
+		addEventListener("SubmitTime", receivedSubmissionEvent);
+		return () => removeEventListener("SubmitTime", receivedSubmissionEvent);
+	}, [addEventListener, removeEventListener, receivedSubmissionEvent]);
+
+
+	// Submit score to leaderboard
+	const handleSubmitToLeaderboard = async (time: any) => {
 
 		setIsSubmitting(true);
 		if (!username) return console.log("Username not found when submitting to leaderboard.");
 
 		// Check if user already submitted a time
-		//
 		const { data: existingEntry } = await client.models.Leaderboard.list({
 			filter: {
 				userId: { eq: user.userId },
@@ -117,20 +131,7 @@ const SubmitToLeaderboard: FC<SubmitToLeaderboardProps> = ({
 	}
 
 
-
-	const handleSubmitScore = useCallback((time: any) => {
-		setSubmitDialogActive(true);
-		if (gameModeActive === "custom") return;
-		setIsSubmitting(true);
-		submitToDB(time);
-	}, [gameModeActive, username]);
-
-	useEffect(() => {
-		addEventListener("SubmitTime", handleSubmitScore);
-		return () => removeEventListener("SubmitTime", handleSubmitScore);
-	}, [addEventListener, removeEventListener, handleSubmitScore]);
-
-
+	// Exit game
 	function handleExitGame() {
 		setSubmitDialogActive(false);
 		sendMessage("UICanvas", "ExitToMainMenu");
@@ -171,4 +172,4 @@ const SubmitToLeaderboard: FC<SubmitToLeaderboardProps> = ({
 	)
 }
 
-export default SubmitToLeaderboard;
+export default MenuCompletedLevel;
