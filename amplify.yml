@@ -14,7 +14,7 @@ frontend:
         - npm install
     build:
       commands:
-        - env | grep -e AMPLIFY_ACCESS_KEY_ID -e AMPLIFY_SECRET_ACCESS_KEY >> env.production
+        - env | grep -e ACCESS_KEY_ID -e SECRET_ACCESS_KEY >> env.production
         - npm run build
   artifacts:
     baseDirectory: .next

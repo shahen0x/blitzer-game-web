@@ -5,8 +5,8 @@ import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
 const polly = new PollyClient({
 	region: 'us-west-2',
 	credentials: {
-		accessKeyId: process.env.AMPLIFY_ACCESS_KEY_ID || '',
-		secretAccessKey: process.env.AMPLIFY_SECRET_ACCESS_KEY || '',
+		accessKeyId: process.env.ACCESS_KEY_ID || '',
+		secretAccessKey: process.env.SECRET_ACCESS_KEY || '',
 	},
 });
 
@@ -14,10 +14,6 @@ const polly = new PollyClient({
 export async function POST(request: Request) {
 	try {
 		const { text } = await request.json();
-
-		if (!polly) {
-			throw new Error('Issue with Polly client', polly);
-		}
 
 		const voiceLine = `
 			<speak>
@@ -36,10 +32,6 @@ export async function POST(request: Request) {
 		});
 
 		const response = await polly.send(command);
-		if (!response) {
-			throw new Error('Issue with polly response: ', response);
-		}
-
 
 		// Convert AudioStream to Buffer
 		const audioBuffer = await response.AudioStream?.transformToByteArray();

@@ -40,8 +40,8 @@ export default function App() {
 	// UNITY CONTEXT
 	// Used for loading and interacting unity
 	const gameName = "blitzer";
-	const gameUrl = "https://dh1ffpxvvd6u7.cloudfront.net/game";
-	// const gameUrl = "/game";
+	// const gameUrl = "https://dh1ffpxvvd6u7.cloudfront.net/game";
+	const gameUrl = "/game";
 	const {
 		unityProvider,
 		isLoaded,
