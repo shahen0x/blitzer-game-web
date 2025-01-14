@@ -1,6 +1,13 @@
+/**
+ * LEVEL LOADER
+ * Display a loading animation while a new level is being generated
+ * 
+ */
+
 import React from 'react';
 
 const LevelLoader: React.FC = () => {
+
 	const gridSize = { rows: 9, cols: 20 };
 
 	return (
