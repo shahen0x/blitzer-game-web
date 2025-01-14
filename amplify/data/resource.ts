@@ -59,7 +59,7 @@ const schema = a.schema({
 			time: a.float().required(),
 			round: a.integer()
 		})
-		.authorization((allow) => [allow.authenticated().to(['create', 'read', 'update', 'delete'])]),
+		.authorization((allow) => [allow.authenticated().to(['create', 'read', 'update'])]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
