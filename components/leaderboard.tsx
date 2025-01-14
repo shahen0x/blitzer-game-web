@@ -28,17 +28,16 @@ const Leaderboard = () => {
 	// Global Store
 	const { leaderboardDialogActive, setLeaderboardDialogActive } = useApplicationStore();
 
+
+	// Local States
 	const [activeTab, setActiveTab] = useState<ActiveTab>("normal");
 	const [activeLeaderboard, setActiveLeaderboard] = useState<Array<Schema["Leaderboard"]["type"]>>([]);
-
 	const [leaderboardCampaign, setLeaderboardCampaign] = useState<Array<Schema["Leaderboard"]["type"]>>([]);
 	const [leaderboardBossFight, setLeaderboardBossFight] = useState<Array<Schema["Leaderboard"]["type"]>>([]);
 	const [leaderboardSurvival, setLeaderboardSurvival] = useState<Array<Schema["Leaderboard"]["type"]>>([]);
-	// console.log(leaderboard);
 
 
-	// COMMON STYLES
-	//
+	// Common stylings
 	const styles = {
 		button: `py-1 px-3 rounded-full text-sm font-semibold text-muted-foreground`,
 		activeButton: `bg-primary !text-black`,
@@ -64,12 +63,12 @@ const Leaderboard = () => {
 				// Survival Leaderboard
 				const survivalData = sorted.filter((item) => item.mode === "survival");
 				const survivalDataByRound = survivalData.sort((a, b) => {
-					if (a.round === null && b.round === null) return 0; // Both are null
-					if (a.round === null) return 1; // `a.round` is null, push it to the end
-					if (b.round === null) return -1; // `b.round` is null, push it to the end
-					return b.round - a.round; // Compare normally if both are numbers
+					if (a.round === null && b.round === null) return 0;
+					if (a.round === null) return 1;
+					if (b.round === null) return -1;
+					return b.round - a.round;
 				});
-				// const survivalDataSorted = survivalDataByRound.sort((a, b) => a.time - b.time);
+
 				setLeaderboardSurvival([...survivalDataByRound]);
 				if (activeTab === "survival") setActiveLeaderboard(survivalDataByRound);
 			},
@@ -79,6 +78,7 @@ const Leaderboard = () => {
 	}, [activeTab]);
 
 
+	// Handles the active leaderboard tab change
 	const handleChangeActiveLeaderboard = (activeTab: ActiveTab) => {
 		setActiveTab(activeTab);
 
@@ -98,22 +98,22 @@ const Leaderboard = () => {
 	}
 
 
-	async function handleDeleteLeaderboardEntry(id: any) {
-		await client.models.Leaderboard.delete({ id })
-	}
+	// For development purposes only
+	// async function handleDeleteLeaderboardEntry(id: any) {
+	// 	await client.models.Leaderboard.delete({ id })
+	// }
 
 
-
-
-	async function createEntry() {
-		const { errors } = await client.models.Leaderboard.create({
-			userId: "dasdaxxxxxxxx",
-			username: "DeadShotter2",
-			mode: "bossFight",
-			time: 1752.62,
-			// round: 13
-		});
-	}
+	// For development purposes only
+	// async function createEntry() {
+	// 	const { errors } = await client.models.Leaderboard.create({
+	// 		userId: "dasdaxxxxxxxx",
+	// 		username: "DeadShotter2",
+	// 		mode: "bossFight",
+	// 		time: 1752.62,
+	// 		// round: 13
+	// 	});
+	// }
 
 	return (
 		<Dialog
@@ -137,7 +137,7 @@ const Leaderboard = () => {
 					</div>
 				</div>
 
-				<button onClick={createEntry}>Create Entry</button>
+				{/* <button onClick={createEntry}>Create Entry</button> */}
 
 				{/* LEADERBOARD TABLE HEAD */}
 				<div className="mb-4 px-4">
