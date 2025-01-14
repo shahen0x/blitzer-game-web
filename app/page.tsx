@@ -39,7 +39,9 @@ export default function App() {
 
 	// UNITY CONTEXT
 	// Used for loading and interacting unity
-	const gameName = "b12";
+	const gameName = "blitzer";
+	const gameUrl = "https://dh1ffpxvvd6u7.cloudfront.net/game";
+	// const gameUrl = "/game";
 	const {
 		unityProvider,
 		isLoaded,
@@ -49,11 +51,11 @@ export default function App() {
 		sendMessage,
 		takeScreenshot,
 	} = useUnityContext({
-		loaderUrl: `/game/Build/${gameName}.loader.js`,
-		dataUrl: `/game/Build/${gameName}.data`,
-		frameworkUrl: `/game/Build/${gameName}.framework.js`,
-		codeUrl: `/game/Build/${gameName}.wasm`,
-		streamingAssetsUrl: "/game/StreamingAssets",
+		loaderUrl: `${gameUrl}/Build/${gameName}.loader.js`,
+		dataUrl: `${gameUrl}/Build/${gameName}.data`,
+		frameworkUrl: `${gameUrl}/Build/${gameName}.framework.js`,
+		codeUrl: `${gameUrl}/Build/${gameName}.wasm`,
+		streamingAssetsUrl: `${gameUrl}/StreamingAssets`,
 		companyName: "AWS Hackathon",
 		productName: "Blitzer",
 		productVersion: "1",
