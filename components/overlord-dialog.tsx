@@ -53,15 +53,15 @@ const OverlordDialog: FC<OverlordDialogProps> = ({ addEventListener, removeEvent
 
 	// Overlord Voice line Events
 	// Received from the game
-	const voicelineEvents = useCallback((voicelineType: any) => {
+	const receivedVoicelineEvent = useCallback((voicelineType: any) => {
 		setVoicelineType(voicelineType);
 		setIsTriggered(true);
 	}, []);
 
 	useEffect(() => {
-		addEventListener("PlayVoiceline", voicelineEvents);
-		return () => removeEventListener("PlayVoiceline", voicelineEvents);
-	}, [addEventListener, removeEventListener, voicelineEvents]);
+		addEventListener("PlayVoiceline", receivedVoicelineEvent);
+		return () => removeEventListener("PlayVoiceline", receivedVoicelineEvent);
+	}, [addEventListener, removeEventListener, receivedVoicelineEvent]);
 
 
 	// VOICE EVENT LINE IS TRIGGERED

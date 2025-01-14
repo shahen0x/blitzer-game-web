@@ -10,7 +10,6 @@ import { FC, useEffect } from "react";
 import Image from "next/image";
 import { useApplicationStore } from "@/store/use-application-store";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
-import { Schema } from "@/amplify/data/resource";
 import { client } from "./amplify/amplify-client-config";
 import { getUrl } from "aws-amplify/storage";
 import Dialog from "./ui/dialog";

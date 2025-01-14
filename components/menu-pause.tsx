@@ -57,7 +57,7 @@ const MenuPause: FC<MenuPause> = ({
 
 
 	// Receive event to pause menu
-	const handleSetPauseMenu = useCallback((sfxMute: any, musicMute: any) => {
+	const receivedActivatePauseMenu = useCallback((sfxMute: any, musicMute: any) => {
 		pauseAudio()
 		setMenuPauseActive(true);
 		sfxMute === 0 ? setSfx(true) : setSfx(false);
@@ -65,21 +65,21 @@ const MenuPause: FC<MenuPause> = ({
 	}, []);
 
 	useEffect(() => {
-		addEventListener("ActivatePauseMenu", handleSetPauseMenu);
-		return () => removeEventListener("ActivatePauseMenu", handleSetPauseMenu);
-	}, [addEventListener, removeEventListener, handleSetPauseMenu]);
+		addEventListener("ActivatePauseMenu", receivedActivatePauseMenu);
+		return () => removeEventListener("ActivatePauseMenu", receivedActivatePauseMenu);
+	}, [addEventListener, removeEventListener, receivedActivatePauseMenu]);
 
 
 	// Receive event to unpause menu
-	const handleUnpauseMenu = useCallback(() => {
+	const receivedDeactivatePauseMenu = useCallback(() => {
 		resumeAudio();
 		setMenuPauseActive(false);
 	}, []);
 
 	useEffect(() => {
-		addEventListener("DeactivatePauseMenu", handleUnpauseMenu);
-		return () => removeEventListener("DeactivatePauseMenu", handleUnpauseMenu);
-	}, [addEventListener, removeEventListener, handleUnpauseMenu]);
+		addEventListener("DeactivatePauseMenu", receivedDeactivatePauseMenu);
+		return () => removeEventListener("DeactivatePauseMenu", receivedDeactivatePauseMenu);
+	}, [addEventListener, removeEventListener, receivedDeactivatePauseMenu]);
 
 
 	// Close pause menu

@@ -31,14 +31,14 @@ const MenuDeath: FC<MenuDeathProps> = ({ addEventListener, removeEventListener, 
 
 
 	// Receive death event
-	const receiveDeathEvent = useCallback(() => {
+	const receivedDeathEvent = useCallback(() => {
 		setMenuDeathActive(true);
 	}, []);
 
 	useEffect(() => {
-		addEventListener("ActivateDeathMenu", receiveDeathEvent);
-		return () => removeEventListener("ActivateDeathMenu", receiveDeathEvent);
-	}, [addEventListener, removeEventListener, receiveDeathEvent]);
+		addEventListener("ActivateDeathMenu", receivedDeathEvent);
+		return () => removeEventListener("ActivateDeathMenu", receivedDeathEvent);
+	}, [addEventListener, removeEventListener, receivedDeathEvent]);
 
 
 	// Restart game
