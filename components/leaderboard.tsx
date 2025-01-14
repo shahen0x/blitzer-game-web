@@ -99,9 +99,9 @@ const Leaderboard = () => {
 
 
 	// For development purposes only
-	async function handleDeleteLeaderboardEntry(id: any) {
-		await client.models.Leaderboard.delete({ id })
-	}
+	// async function handleDeleteLeaderboardEntry(id: any) {
+	// 	await client.models.Leaderboard.delete({ id })
+	// }
 
 
 	// For development purposes only
@@ -159,7 +159,7 @@ const Leaderboard = () => {
 								<div>{item.username}</div>
 								{activeTab === "survival" && <div>{item.round}</div>}
 								<div className="text-right">{formatTime(item.time)}</div>
-								<button onClick={() => handleDeleteLeaderboardEntry(item.id)}>Delete</button>
+								{/* <button onClick={() => handleDeleteLeaderboardEntry(item.id)}>Delete</button> */}
 							</div>
 						))}
 					</div>
