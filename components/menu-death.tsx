@@ -1,11 +1,19 @@
+/**
+ * DEATH MENU
+ * Appears when the player dies
+ * Allows the player to restart or exit the game
+ * 
+ */
+
 "use client";
 
 import { FC, useCallback, useEffect } from "react";
-import Dialog from "../ui/dialog";
+import Dialog from "./ui/dialog";
 import { useApplicationStore } from "@/store/use-application-store";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import useOverlordStore from "@/store/use-overlord-store";
+
 
 interface MenuDeathProps {
 	addEventListener: (eventName: string, callback: (...parameters: ReactUnityEventParameter[]) => ReactUnityEventParameter) => void;
@@ -13,32 +21,35 @@ interface MenuDeathProps {
 	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void;
 }
 
-const MenuDeath: FC<MenuDeathProps> = ({
-	addEventListener,
-	removeEventListener,
-	sendMessage
-}) => {
 
-	const { menuDeathActive, setMenuDeathActive } = useApplicationStore();
+const MenuDeath: FC<MenuDeathProps> = ({ addEventListener, removeEventListener, sendMessage }) => {
+
+
+	// Global Store
+	const { menuDeathActive, setMenuDeathActive, gameModeActive } = useApplicationStore();
 	const { stopOverlordAudio } = useOverlordStore();
 
 
-	const handleSetDeathMenu = useCallback(() => {
+	// Receive death event
+	const receiveDeathEvent = useCallback(() => {
 		setMenuDeathActive(true);
 	}, []);
 
 	useEffect(() => {
-		addEventListener("ActivateDeathMenu", handleSetDeathMenu);
-		return () => removeEventListener("ActivateDeathMenu", handleSetDeathMenu);
-	}, [addEventListener, removeEventListener, handleSetDeathMenu]);
+		addEventListener("ActivateDeathMenu", receiveDeathEvent);
+		return () => removeEventListener("ActivateDeathMenu", receiveDeathEvent);
+	}, [addEventListener, removeEventListener, receiveDeathEvent]);
 
 
+	// Restart game
 	function handleRestartGame() {
 		stopOverlordAudio();
 		setMenuDeathActive(false);
 		sendMessage("UICanvas", "RestartLevel")
 	}
 
+
+	// Exit game
 	function handleExitGame() {
 		stopOverlordAudio();
 		setMenuDeathActive(false);
@@ -58,8 +69,12 @@ const MenuDeath: FC<MenuDeathProps> = ({
 				</div>
 
 				<div className="space-y-3 outline-none">
-					<Button onClick={handleRestartGame} variant={"secondary"} className="w-full" tabIndex={-1}>Play Again</Button>
-					<Button onClick={handleExitGame} variant={"secondary"} className="w-full" tabIndex={-1}>Exit to Main Menu</Button>
+					<Button onClick={handleRestartGame} variant={"secondary"} className="w-full" tabIndex={-1}>
+						{gameModeActive === "normal" ? "Restart Checkpoint" : "Play Again"}
+					</Button>
+					<Button onClick={handleExitGame} variant={"secondary"} className="w-full" tabIndex={-1}>
+						Exit to Main Menu
+					</Button>
 				</div>
 			</div>
 		</Dialog>
