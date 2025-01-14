@@ -1,4 +1,4 @@
-import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
+import { PollyClient } from '@aws-sdk/client-polly';
 
 // Initialize the Polly client
 const polly = new PollyClient({

@@ -1,21 +1,24 @@
+/**
+ * LEVEL GENERATOR
+ * Uses AI to generate new levels and player can play them
+ * 
+ */
+
 "use client";
 
 import { FC, useEffect, useState } from "react";
 import { useApplicationStore } from "@/store/use-application-store";
 import Dialog from "../ui/dialog";
 import { Button } from "../ui/button";
-import { StarsBackground } from "../background/stars";
 import MorphingText from "../ui/morphing-text";
 import LevelLoader from "./level-loader";
-import { generateClient } from "aws-amplify/api";
-import { createAIHooks } from "@aws-amplify/ui-react-ai";
-import { Schema } from "@/amplify/data/resource";
 import LevelPreview from "./level-preview";
 import { convertToNumberArray } from "@/lib/convert-to-number-array";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
+import useLevelGenerator from "@/hooks/use-level-generator";
 
 
-
+// Messages displayed while the AI is generating a level
 const startScreenTexts = [
 	"Welcome!",
 	"The AI overlord shapes the world.",
@@ -29,6 +32,7 @@ const startScreenTexts = [
 	"You’re a pawn in its game.",
 	"Survive its design."
 ];
+
 
 const creationTexts = [
 	"Shaping your challenge...",
@@ -44,11 +48,6 @@ const creationTexts = [
 ];
 
 
-interface LevelGeneratorProps {
-	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void;
-}
-
-
 enum GenerationStep {
 	StartScreen,
 	Generating,
@@ -57,30 +56,31 @@ enum GenerationStep {
 }
 
 
+// Max number of generations
 const MAX_GENERATIONS = 10;
 const STORAGE_KEY = 'levelGenerations';
 
 
-// Init Amplify AI hook
-const client = generateClient<Schema>({ authMode: "userPool" });
-const { useAIGeneration } = createAIHooks(client);
+interface LevelGeneratorProps {
+	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void;
+}
 
-const LevelGenerator: FC<LevelGeneratorProps> = ({
-	sendMessage
-}) => {
 
-	const {
-		setMainMenuActive,
-		setGameModeActive,
-		isLevelGeneratorActive,
-		setIsLevelGeneratorActive,
-		setGeneratedLevelData,
-		setCustomGameLaunchedFrom
-	} = useApplicationStore();
+const LevelGenerator: FC<LevelGeneratorProps> = ({ sendMessage }) => {
 
+
+	// Global Stores
+	const { setMainMenuActive, setGameModeActive, isLevelGeneratorActive, setIsLevelGeneratorActive, setGeneratedLevelData, setCustomGameLaunchedFrom } = useApplicationStore();
+
+
+	// Local States
 	const [generationStep, setGenerationStep] = useState(GenerationStep.StartScreen);
 	const [generationsUsed, setGenerationsUsed] = useState(0);
-	const [{ data, isLoading, hasError, messages }, generateLevels] = useAIGeneration("GenerateLevels");
+	const [gridData, setGridData] = useState<string | null>(null);
+
+
+	// Hooks
+	const { generateLevel } = useLevelGenerator();
 
 
 	// Initialize generations count from localStorage
@@ -91,31 +91,10 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 	}, []);
 
 
+	// Start generating new level
+	const handleGenerateLevel = async () => {
 
-	function generateInstructions() {
-		// generate random seed number
-		const seed = Math.floor(Math.random() * 1000);
-
-		// define extraction point options
-		const extractionPointOptions: string[] = [
-			"top middle",
-			"center middle",
-			"bottom middle",
-			"top right",
-			"center right",
-			"bottom right",
-		];
-
-		const instructions = "generate new level with seed number " + seed + ". Place the extraction point at the " + extractionPointOptions[seed % extractionPointOptions.length] + " of the grid";
-		return instructions;
-	}
-
-
-	async function handleStartChallenge() {
-		if (generationsUsed >= MAX_GENERATIONS) {
-			return alert("You have used all your credits. Play more in the Level Browser.");
-		}
-
+		if (generationsUsed >= MAX_GENERATIONS) return alert("You have used all your credits. Play more in the Level Browser.");
 		setGenerationStep(GenerationStep.Generating);
 
 		// Update localStorage before generating
@@ -123,29 +102,35 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 		localStorage.setItem(STORAGE_KEY, newGenerationCount.toString());
 		setGenerationsUsed(newGenerationCount);
 
-		generateLevels({ instructions: generateInstructions() })
+		// Generate level using AI
+		const generatedLevel = await generateLevel();
+
+		if (generatedLevel) {
+			setGridData(generatedLevel);
+			setGenerationStep(GenerationStep.Generated);
+		}
 	}
 
 
-	useEffect(() => {
-		if (data) setGenerationStep(GenerationStep.Generated);
-	}, [data]);
+	// Play the newly generated level
+	const handlePlayLevel = () => {
+		if (!gridData) return;
 
-
-
-	const handleStartAILevelMode = () => {
-		if (!data) return;
-		const generatedLevel = convertToNumberArray(data);
+		// Used for the level uploader
+		const generatedLevel = convertToNumberArray(gridData);
 		setGeneratedLevelData(generatedLevel);
+
 		setIsLevelGeneratorActive(false);
 		setMainMenuActive(false);
 		setGameModeActive('custom');
 		setCustomGameLaunchedFrom("ai-generator");
-		sendMessage("MainMenuManager", "StartAILevelMode", JSON.stringify({ grid: generatedLevel }));
+
+		sendMessage("MainMenuManager", "StartAILevelMode", `{grid: ${gridData}}`);
 		setGenerationStep(GenerationStep.StartScreen);
 	}
 
 
+	// Get the text to display for the generations used
 	const getGenerationsText = () => {
 		return `${generationsUsed} / ${MAX_GENERATIONS} AI levels generated. ${generationsUsed >= MAX_GENERATIONS ? 'Play more in the Level Browser.' : ''}`;
 	}
@@ -157,7 +142,6 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 			onOpenChange={(generationStep === GenerationStep.Generating || generationStep === GenerationStep.Generated) ? () => { } : setIsLevelGeneratorActive}
 			className="max-w-5xl min-h-[calc(100vh_-_10rem)]"
 		>
-			<StarsBackground className="absolute z-0" />
 			<div className="relative z-10 h-full flex flex-col justify-center items-center space-y-10">
 
 				{generationStep === GenerationStep.StartScreen &&
@@ -171,7 +155,7 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 								Back
 							</Button>
 
-							<Button variant={"orange"} size={"lg"} onClick={handleStartChallenge}>
+							<Button variant={"orange"} size={"lg"} onClick={handleGenerateLevel}>
 								Start Challenge
 							</Button>
 						</div>
@@ -185,11 +169,11 @@ const LevelGenerator: FC<LevelGeneratorProps> = ({
 					</>
 				}
 
-				{(generationStep === GenerationStep.Generated && data) &&
+				{(generationStep === GenerationStep.Generated && gridData) &&
 					<>
 						<h1 className="font-orbitron text-4xl">Your challenge is ready!</h1>
-						<LevelPreview animate={true} initialGrid={convertToNumberArray(data)} />
-						<Button variant={"orange"} size={"lg"} onClick={handleStartAILevelMode}>
+						<LevelPreview animate={true} initialGrid={convertToNumberArray(gridData)} />
+						<Button variant={"orange"} size={"lg"} onClick={handlePlayLevel}>
 							Play Challenge
 						</Button>
 					</>

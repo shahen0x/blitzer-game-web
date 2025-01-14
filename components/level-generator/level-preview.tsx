@@ -1,11 +1,15 @@
-import React, { useState, useEffect, FC } from 'react';
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipProvider,
-	TooltipTrigger,
-} from "@/components/ui/tooltip";
+/**
+ * LEVEL PREVIEWER
+ * Previews the generated level
+ * Also has the same logic from the game to resolve the grid in case of inconsistencies
+ * 
+ */
 
+import React, { useState, useEffect, FC } from 'react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, } from "@/components/ui/tooltip";
+
+
+// Grid Resolver from the game
 class GridResolver {
 	private grid: number[][];
 	private regions: number[][];
@@ -127,19 +131,21 @@ class GridResolver {
 	}
 }
 
+
 interface LevelPreviewProps {
 	animate?: boolean;
 	initialGrid: number[][];
 }
 
-const LevelPreview: FC<LevelPreviewProps> = ({
-	animate = true,
-	initialGrid
-}) => {
+const LevelPreview: FC<LevelPreviewProps> = ({ animate = true, initialGrid }) => {
 
+
+	// Local states
 	const [grid, setGrid] = useState(initialGrid);
 	const [visibleCells, setVisibleCells] = useState(0);
 
+
+	// Resolve the grid
 	useEffect(() => {
 		const resolver = new GridResolver(initialGrid);
 		const fixedGrid = resolver.fixIsolatedRegions(4, 0);
@@ -147,7 +153,7 @@ const LevelPreview: FC<LevelPreviewProps> = ({
 	}, []);
 
 
-	// Reveal cells one by one
+	// Reveal cells one by one animation
 	useEffect(() => {
 		if (animate && visibleCells < initialGrid.flat().length) {
 			const timeout = setTimeout(() => {
@@ -161,6 +167,7 @@ const LevelPreview: FC<LevelPreviewProps> = ({
 	}, [visibleCells, animate]);
 
 
+	// Get cell color based on value
 	const getCellColor = (value: number): string => {
 		switch (value) {
 			case 0: return '';
@@ -171,11 +178,13 @@ const LevelPreview: FC<LevelPreviewProps> = ({
 			case 5:
 			case 6:
 			case 7: return 'bg-red-400 hover:bg-red-500';
-			case 8: return 'bg-primary hover:bg-primary/80 text-black';
+			case 8: return 'bg-primary hover:bg-primary/80 !text-black';
 			default: return 'bg-white';
 		}
 	};
 
+
+	// Get cell description based on value
 	const getCellDescription = (value: number): string => {
 		switch (value) {
 			case 2: return 'Turret';
@@ -189,6 +198,8 @@ const LevelPreview: FC<LevelPreviewProps> = ({
 		}
 	};
 
+
+	// Check if the tooltip should be shown
 	const shouldShowTooltip = (value: number): boolean => {
 		return value >= 2;
 	};
@@ -213,7 +224,7 @@ const LevelPreview: FC<LevelPreviewProps> = ({
 															${animate && isVisible ? 'opacity-100' : 'opacity-0'}
 														`}
 												>
-													<span className={`text-sm ${cell > 2 ? 'text-white' : 'text-black'}`}>
+													<span className={`text-sm ${cell === 8 ? 'text-black' : cell > 2 ? 'text-white' : 'text-black'}`}>
 														{getCellDescription(cell).charAt(0)}
 													</span>
 												</div>

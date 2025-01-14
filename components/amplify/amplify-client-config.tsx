@@ -1,3 +1,7 @@
+/**
+ * Client side configuration for Amplify
+ */
+
 "use client";
 
 import { Amplify } from "aws-amplify";

@@ -1,53 +1,47 @@
+/**
+ * MAIN PAGE
+ * The main page of the application that initiates the game as well as all the other components
+ *
+ */
+
+
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useRefStore } from "@/store/use-ref-store";
-
 import { Unity, useUnityContext } from "react-unity-webgl";
-
-import UnityLoader from "@/components/unity/unity-loader";
+import UnityLoader from "@/components/unity-loader";
 import MainMenu from "@/components/main-menu/index";
 import LevelGenerator from "@/components/level-generator";
-import SubmitToLeaderboard from "@/components/leaderboard/submit";
+import MenuCompletedLevel from "@/components/menu-completed-level";
 import Leaderboard from "@/components/leaderboard";
 import LevelBrowser from "@/components/level-browser";
 import LevelUploader from "@/components/level-generator/level-uploader";
-import { client } from "@/components/amplify/amplify-client-config";
-import { useDataStore } from "@/store/use-data-store";
-import { getUrl } from "aws-amplify/storage";
 import MenuPause from "@/components/menu-pause";
 import MenuDeath from "@/components/menu-death";
-import Debug from "@/components/debug";
 import Credits from "@/components/credits";
-import useFullscreen from "@/hooks/use-fullscreen";
 import OverlordDialog from "@/components/overlord-dialog";
-import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
 import SurvivalManager from "@/components/survival-manager";
-import { useSurvivalModeStore } from "@/store/use-survival-mode-store";
-import SurvivalSubmitToLeaderboard from "@/components/survival-manager/submit";
-
+import SurvivalSubmitToLeaderboard from "@/components/survival-manager/submit-to-leaderboard";
 
 
 export default function App() {
 
-	// Hooks
-	useFullscreen();
+
+	// CONTAINER REFERENCE
+	// Used for fullscreen menu modal compatibility
 	const containerRef = useRef<HTMLDivElement>(null);
 	const { setContainerRef } = useRefStore();
-	const { setLevels } = useDataStore();
-
-
-	// Overlord's voicelines
-	const hasRun = useRef(false);
-	const { generateVoicelines, audio } = useOverlordStore();
-	const [overlordDialogActive, setOverlordDialogActive] = useState(false);
-	const [voiceEventSelected, setVoiceEventSelected] = useState<VoicelineType>("spawn");
-
+	useEffect(() => {
+		setContainerRef(containerRef);
+	}, [setContainerRef]);
 
 
 	// UNITY CONTEXT
 	// Used for loading and interacting unity
-	const gameName = "b12";
+	const gameName = "blitzer";
+	const gameUrl = "https://dh1ffpxvvd6u7.cloudfront.net/game";
+	// const gameUrl = "/game";
 	const {
 		unityProvider,
 		isLoaded,
@@ -57,11 +51,11 @@ export default function App() {
 		sendMessage,
 		takeScreenshot,
 	} = useUnityContext({
-		loaderUrl: `/game/Build/${gameName}.loader.js`,
-		dataUrl: `/game/Build/${gameName}.data`,
-		frameworkUrl: `/game/Build/${gameName}.framework.js`,
-		codeUrl: `/game/Build/${gameName}.wasm`,
-		streamingAssetsUrl: "/game/StreamingAssets",
+		loaderUrl: `${gameUrl}/Build/${gameName}.loader.js`,
+		dataUrl: `${gameUrl}/Build/${gameName}.data`,
+		frameworkUrl: `${gameUrl}/Build/${gameName}.framework.js`,
+		codeUrl: `${gameUrl}/Build/${gameName}.wasm`,
+		streamingAssetsUrl: `${gameUrl}/StreamingAssets`,
 		companyName: "AWS Hackathon",
 		productName: "Blitzer",
 		productVersion: "1",
@@ -69,67 +63,6 @@ export default function App() {
 			preserveDrawingBuffer: true,
 		}
 	});
-
-
-
-	// CONTAINER REFERENCE
-	// Used for fullscreen compatibility
-	useEffect(() => {
-		setContainerRef(containerRef);
-	}, [setContainerRef]);
-
-
-	// Generate AI Overlord's voicelines
-	useEffect(() => {
-		if (hasRun.current) return;
-		hasRun.current = true;
-
-		generateVoicelines();
-	}, []);
-
-
-	// Overlord Voiceline Events
-	const voicelineEvents = useCallback((voicelineType: any) => {
-		setVoiceEventSelected(voicelineType);
-		setOverlordDialogActive(true);
-	}, []);
-
-	useEffect(() => {
-		addEventListener("PlayVoiceline", voicelineEvents);
-		return () => removeEventListener("PlayVoiceline", voicelineEvents);
-	}, [addEventListener, removeEventListener, voicelineEvents]);
-
-
-
-	// Prefetch data for better user experience
-	async function fetchLevels() {
-		client.models.AiLevel.observeQuery().subscribe({
-			next: async (data) => {
-				const levelsWithCovers = await Promise.all(
-					data.items
-						// Sort in descending order (newest first)
-						.sort((a, b) => {
-							return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-						})
-						// Map to add cover image URL from S3
-						.map(async (level) => {
-							if (level.cover) {
-								const coverUrl = await getUrl({ path: level.cover });
-								return { ...level, coverImage: coverUrl.url.href };
-							}
-							return level;
-						})
-				)
-				setLevels(levelsWithCovers);
-			},
-		});
-	}
-
-	useEffect(() => {
-		console.log("⚠️ fetching levels")
-		fetchLevels();
-	}, []);
-
 
 
 	return (
@@ -164,13 +97,9 @@ export default function App() {
 				sendMessage={sendMessage}
 			/>
 
-			<LevelGenerator
-				sendMessage={sendMessage}
-			/>
+			<LevelGenerator sendMessage={sendMessage} />
 
-			<LevelBrowser
-				sendMessage={sendMessage}
-			/>
+			<LevelBrowser sendMessage={sendMessage} />
 
 			<LevelUploader
 				addEventListener={addEventListener}
@@ -179,7 +108,8 @@ export default function App() {
 			/>
 
 			<Leaderboard />
-			<SubmitToLeaderboard
+
+			<MenuCompletedLevel
 				addEventListener={addEventListener}
 				removeEventListener={removeEventListener}
 				sendMessage={sendMessage}
@@ -199,15 +129,12 @@ export default function App() {
 			/>
 
 			<OverlordDialog
-				type={voiceEventSelected}
-				isTriggered={overlordDialogActive}
-				setIsTriggered={setOverlordDialogActive}
+				addEventListener={addEventListener}
+				removeEventListener={removeEventListener}
 				sendMessage={sendMessage}
 			/>
 
 			<Credits />
-
-			{/* <Debug /> */}
 
 		</main>
 	);

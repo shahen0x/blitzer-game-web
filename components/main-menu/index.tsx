@@ -15,10 +15,9 @@ import MainMenuBtn from "./main-menu-btn";
 import { MainMenuSectionPrimary, MainMenuSectionSecondary, MainMenuSection } from "./main-menu-section";
 import { Button } from "../ui/button";
 import { signOut } from "aws-amplify/auth";
-import { useRouter } from "next/navigation";
 import { useSurvivalModeStore } from "@/store/use-survival-mode-store";
 import useLevelGenerator from "@/hooks/use-level-generator";
-
+import { useLevelsStore } from "@/store/use-level-store";
 
 
 interface MainMenuProps {
@@ -34,62 +33,43 @@ const isTutorialCompleted = (): boolean => {
 };
 
 
-const MainMenu: FC<MainMenuProps> = ({
-	addEventListener,
-	removeEventListener,
-	sendMessage
-}) => {
+const MainMenu: FC<MainMenuProps> = ({ addEventListener, removeEventListener, sendMessage }) => {
+
+
+	// Global Store
+	const { mainMenuActive, setMainMenuActive, setGameModeActive, setIsLevelGeneratorActive, setLevelBrowserActive, setLeaderboardDialogActive, setCreditsDialogActive } = useApplicationStore();
+	const { setGridData } = useSurvivalModeStore();
+	const { levels, getRandomLevelsGrid } = useLevelsStore();
+
+
+	// Local States
+	const [showTutorial, setShowTutorial] = useState(false);
+
 
 	// Hooks
-	const router = useRouter();
-
-	// Global States
-	const {
-		mainMenuActive,
-		setMainMenuActive,
-		setGameModeActive,
-		setIsLevelGeneratorActive,
-		setLevelBrowserActive,
-		setLeaderboardDialogActive,
-		setCreditsDialogActive
-	} = useApplicationStore();
-
-	const { gridData, setGridData } = useSurvivalModeStore();
 	const { generateLevel } = useLevelGenerator();
 
 
 	// Force first time players to play the tutorial
-	const [showTutorial, setShowTutorial] = useState(false);
-
 	useEffect(() => {
 		setShowTutorial(!isTutorialCompleted());
 	}, []);
 
 
 	// Listens for the "ActivateMainMenu" event and sets the main menu active
-	const handleSetMainMain = useCallback(() => {
+	const receivedMainMenuEvent = useCallback(() => {
 		setMainMenuActive(true);
 		setGameModeActive('none');
 		setShowTutorial(!isTutorialCompleted());
 	}, []);
 
 	useEffect(() => {
-		addEventListener("ActivateMainMenu", handleSetMainMain);
-		return () => removeEventListener("ActivateMainMenu", handleSetMainMain);
-	}, [addEventListener, removeEventListener, handleSetMainMain]);
+		addEventListener("ActivateMainMenu", receivedMainMenuEvent);
+		return () => removeEventListener("ActivateMainMenu", receivedMainMenuEvent);
+	}, [addEventListener, removeEventListener, receivedMainMenuEvent]);
 
 
-	// If the main menu is not active, don't render anything
-	if (!mainMenuActive) return null;
-
-
-	// Start game modes
-	function handleStartNormalMode() {
-		setMainMenuActive(false);
-		setGameModeActive('normal');
-		sendMessage("MainMenuManager", "StartNormalMode");
-	}
-
+	// Tutorial mode
 	function handleStartTutorial() {
 		setMainMenuActive(false);
 		setGameModeActive('tutorial');
@@ -97,34 +77,68 @@ const MainMenu: FC<MainMenuProps> = ({
 		localStorage.setItem('tutorialCompleted', 'true');
 	}
 
+
+	// Campaign mode
+	// Selects 3 random levels from the level browser
+	// Has a fallback to default levels if the browser is empty
+	function handleStartCampaignMode() {
+		setMainMenuActive(false);
+		setGameModeActive('normal');
+
+		const randomLevels = getRandomLevelsGrid(3);
+
+		// If no levels are found, use fallback levels
+		if (randomLevels === undefined) {
+			sendMessage("MainMenuManager", "StartNormalMode");
+			return;
+		}
+
+		for (let i = 0; i < randomLevels.length; i++) {
+			randomLevels[i] = `{grid: ${randomLevels[i]}}`;
+		}
+
+		const playlist = { playlist: randomLevels };
+		sendMessage("MainMenuManager", "StartCampaignMode", JSON.stringify(playlist));
+	}
+
+
+	// Boss fight mode
 	const handleStartBossFightMode = () => {
 		setMainMenuActive(false);
 		setGameModeActive('bossFight');
 		sendMessage("MainMenuManager", "StartBossFight");
 	}
 
+
+	// Survival mode
+	// Uses a random level from the level browser
+	// Has a fallback to default levels if the browser is empty
 	const handleStartSurvivalMode = async () => {
 		setMainMenuActive(false);
 		setGameModeActive('survival');
-		sendMessage("MainMenuManager", "StartSurvivalMode", `{grid: ${gridData}}`);
 
-		// PreGenerate a new AI level
-		const generatedLevel = await generateLevel();
-		if (generatedLevel) setGridData(generatedLevel);
+		if (levels && levels.length > 0) {
+			// Get random level from existing level library
+			const fallbackLevel = "[[0,0,0,0,2,1,4,1,0,0,0,0,2,1,0,0,0,2,0,0],[0,2,3,1,0,0,0,5,1,2,0,3,1,4,1,2,0,1,0,0],[0,8,7,2,0,2,0,0,0,1,0,1,0,0,0,1,4,2,0,0],[0,1,0,1,4,1,2,0,0,5,1,2,0,2,3,1,0,6,1,0],[1,1,0,2,0,0,6,1,2,1,0,0,0,1,0,4,1,0,2,1],[0,2,0,1,3,0,0,0,0,4,1,3,0,5,0,0,2,0,0,0],[0,1,4,2,1,2,0,2,0,0,0,1,2,1,6,1,0,0,0,0],[0,3,0,0,0,5,1,1,2,0,0,0,0,0,2,5,1,1,0,0],[0,2,0,0,0,1,0,0,6,1,2,0,0,0,1,0,0,2,0,0]]";
+			const randomLevel = getRandomLevelsGrid(1);
+			sendMessage("MainMenuManager", "StartSurvivalMode", `{grid: ${randomLevel == undefined ? fallbackLevel : randomLevel}}`);
+
+			// PreGenerate a new AI level
+			const generatedLevel = await generateLevel();
+			if (generatedLevel) setGridData(generatedLevel);
+		}
 	}
 
 
-	const handleStartFootageScene = () => {
-		setMainMenuActive(false);
-		setGameModeActive('bossFight');
-		sendMessage("MainMenuManager", "StartFootageScene");
-	}
-
-
+	// Sign out from the game
 	const handleSignOut = async () => {
 		await signOut();
 		window.location.reload();
 	}
+
+
+	// If the main menu is not active, don't render anything
+	if (!mainMenuActive) return null;
 
 
 	return (
@@ -144,8 +158,7 @@ const MainMenu: FC<MainMenuProps> = ({
 					<>
 						<MainMenuSection title="Normal Mode">
 							<MainMenuSectionPrimary>
-								{/* <MainMenuBtn onClick={handleStartFootageScene} title="Play Campaign" /> */}
-								<MainMenuBtn onClick={handleStartNormalMode} title="Play Campaign" />
+								<MainMenuBtn onClick={handleStartCampaignMode} title="Play Campaign" />
 							</MainMenuSectionPrimary>
 
 							<MainMenuSectionSecondary>

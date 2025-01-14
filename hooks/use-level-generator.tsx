@@ -1,3 +1,8 @@
+/**
+ * LEVEL GENERATOR
+ * Using AI
+ */
+
 import { Schema } from "@/amplify/data/resource";
 import { generateClient } from "aws-amplify/api";
 

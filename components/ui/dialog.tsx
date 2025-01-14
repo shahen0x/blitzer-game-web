@@ -1,3 +1,9 @@
+/**
+ * DIALOG
+ * A custom dialog component made with radix-ui
+ * 
+ */
+
 "use client";
 
 import { FC } from "react";
@@ -6,7 +12,7 @@ import { cn } from "@/lib/utils";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import * as VisuallyHidden from "@radix-ui/react-visually-hidden";
 import { BorderBeam } from "./border-beam";
-import { StarsBackground } from "../background/stars";
+import { StarsBackground } from "./stars-background";
 import { useApplicationStore } from "@/store/use-application-store";
 
 interface DialogProps {

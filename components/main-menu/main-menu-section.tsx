@@ -1,3 +1,8 @@
+/**
+ * MENU SECTIONS
+ * 
+ */
+
 "use client";
 
 import { FC } from "react";
