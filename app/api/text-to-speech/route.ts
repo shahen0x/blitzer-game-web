@@ -1,15 +1,6 @@
 import { NextResponse } from "next/server";
-// import polly from "@/lib/aws";
 import { PollyClient, SynthesizeSpeechCommand } from '@aws-sdk/client-polly';
 
-
-// const polly = new PollyClient({
-// 	region: 'us-west-2',
-// 	credentials: {
-// 		accessKeyId: 'AKIA54L7OBTWT6SODZEP',
-// 		secretAccessKey: '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',
-// 	},
-// });
 
 const polly = new PollyClient({
 	region: 'us-west-2',
@@ -18,9 +9,6 @@ const polly = new PollyClient({
 		secretAccessKey: process.env.AMPLIFY_SECRET_ACCESS_KEY || '',
 	},
 });
-
-console.log(polly);
-
 
 
 export async function POST(request: Request) {
