@@ -1,3 +1,8 @@
+/**
+ * GENERATE AUDIO USING AWS POLLY
+ * 
+ */
+
 import useOverlordStore from "@/store/use-overlord-store";
 
 const useGenerateAudio = () => {
@@ -10,7 +15,7 @@ const useGenerateAudio = () => {
 		onended?: () => void
 	) => {
 		try {
-			const response = await fetch('/api/ai', {
+			const response = await fetch('/api/text-to-speech', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

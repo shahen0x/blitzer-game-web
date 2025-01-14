@@ -7,14 +7,12 @@ export async function POST(request: Request) {
 		const { text } = await request.json();
 
 		const voiceLine = `
-		<speak>
-<amazon:effect  vocal-tract-length="-20%">
-<prosody pitch="-60%" rate="60%">${text}
-
-</prosody>
-</amazon:effect>
-</speak>
-		`
+			<speak>
+				<amazon:effect  vocal-tract-length="-20%">
+					<prosody pitch="-60%" rate="60%">${text}</prosody>
+				</amazon:effect>
+			</speak>
+		`;
 
 		const command = new SynthesizeSpeechCommand({
 			Text: voiceLine,
