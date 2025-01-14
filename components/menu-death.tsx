@@ -27,7 +27,7 @@ const MenuDeath: FC<MenuDeathProps> = ({ addEventListener, removeEventListener, 
 
 	// Global Store
 	const { menuDeathActive, setMenuDeathActive, gameModeActive } = useApplicationStore();
-	const { stopOverlordAudio } = useOverlordStore();
+	const { stopOverlordAudio, setAudioStopped } = useOverlordStore();
 
 
 	// Receive death event
@@ -44,6 +44,7 @@ const MenuDeath: FC<MenuDeathProps> = ({ addEventListener, removeEventListener, 
 	// Restart game
 	function handleRestartGame() {
 		stopOverlordAudio();
+		setAudioStopped(true);
 		setMenuDeathActive(false);
 		sendMessage("UICanvas", "RestartLevel")
 	}

@@ -26,7 +26,7 @@ const OverlordDialog: FC<OverlordDialogProps> = ({ addEventListener, removeEvent
 
 	// Global Store
 	const { gameModeActive } = useApplicationStore();
-	const { generateVoicelines, pickVoiceline, audio, audioStopped, setAudioStopped } = useOverlordStore();
+	const { generateVoicelines, pickVoiceline, audio, audioStopped, setAudioStopped, stopOverlordAudio } = useOverlordStore();
 
 
 	// Local States
@@ -90,6 +90,7 @@ const OverlordDialog: FC<OverlordDialogProps> = ({ addEventListener, removeEvent
 
 	// When audio ends
 	const handleAudioEnd = () => {
+		stopOverlordAudio();
 		setIsTriggered(false);
 		setShowDialog(false);
 		sendMessage("AudioManager", "SetVolume", 1);
@@ -98,7 +99,7 @@ const OverlordDialog: FC<OverlordDialogProps> = ({ addEventListener, removeEvent
 
 	// Stop everything if audio is stopped
 	useEffect(() => {
-		if (audioStopped && !audio) {
+		if (audioStopped) {
 			setIsTriggered(false);
 			setShowDialog(false);
 			setAudioStopped(false);
