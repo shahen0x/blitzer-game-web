@@ -15,6 +15,7 @@ import { Separator } from "./ui/separator";
 
 const Credits = () => {
 
+	// Global Store
 	const { creditsDialogActive, setCreditsDialogActive } = useApplicationStore();
 
 	return (

@@ -8,11 +8,9 @@
 
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-
 import { useApplicationStore } from "@/store/use-application-store";
 import useOverlordStore, { VoicelineType } from "@/store/use-overlord-store";
 import useGenerateAudio from "../hooks/use-generate-audio";
-
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
 import { BorderBeam } from "./ui/border-beam";
 
@@ -26,7 +24,7 @@ interface OverlordDialogProps {
 const OverlordDialog: FC<OverlordDialogProps> = ({ addEventListener, removeEventListener, sendMessage }) => {
 
 
-	// Store
+	// Global Store
 	const { gameModeActive } = useApplicationStore();
 	const { generateVoicelines, pickVoiceline, audio, audioStopped, setAudioStopped } = useOverlordStore();
 

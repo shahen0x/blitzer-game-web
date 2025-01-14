@@ -10,15 +10,12 @@
 
 import { useEffect, useState } from "react";
 import { useApplicationStore } from "@/store/use-application-store";
-
 import { Schema } from "@/amplify/data/resource";
-import { client } from "../amplify/amplify-client-config";
+import { client } from "./amplify/amplify-client-config";
 import { formatTime } from "@/lib/format-numbers";
-
-import Dialog from "../ui/dialog";
-import { Button } from "../ui/button";
-import { ScrollArea } from "../ui/scroll-area";
-
+import Dialog from "./ui/dialog";
+import { Button } from "./ui/button";
+import { ScrollArea } from "./ui/scroll-area";
 import { ChevronLeft } from "lucide-react";
 
 
@@ -27,6 +24,8 @@ type ActiveTab = "normal" | "bossFight" | "survival";
 
 const Leaderboard = () => {
 
+
+	// Global Store
 	const { leaderboardDialogActive, setLeaderboardDialogActive } = useApplicationStore();
 
 	const [activeTab, setActiveTab] = useState<ActiveTab>("normal");

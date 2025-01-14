@@ -39,14 +39,10 @@ const MenuPause: FC<MenuPause> = ({
 }) => {
 
 
-	// Store
+	// Global Store
 	const { menuPauseActive, setMenuPauseActive, gameModeActive } = useApplicationStore();
 	const { setHasUploadedLevel } = useLevelUploaderStore();
 	const { pauseAudio, resumeAudio, stopOverlordAudio } = useOverlordStore();
-
-
-	// Hooks
-	const { isFullscreen, toggleFullscreen } = useFullscreen();
 
 
 	// Local States
@@ -54,6 +50,10 @@ const MenuPause: FC<MenuPause> = ({
 	const [music, setMusic] = useState(true);
 	const [confirmationActive, setConfirmationActive] = useState(false);
 	const [confirmationAction, setConfirmationAction] = useState<ConfirmationAction>(ConfirmationAction.None);
+
+
+	// Hooks
+	const { isFullscreen, toggleFullscreen } = useFullscreen();
 
 
 	// Receive event to pause menu

@@ -6,7 +6,7 @@
 
 "use client";
 
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import Image from "next/image";
 import { useApplicationStore } from "@/store/use-application-store";
 import { ReactUnityEventParameter } from "react-unity-webgl/distribution/types/react-unity-event-parameters";
@@ -20,11 +20,6 @@ import { ChevronLeft, LoaderCircle } from "lucide-react";
 import { useLevelsStore } from "@/store/use-level-store";
 
 
-type AiLevelWithCoverImage = Schema["AiLevel"]["type"] & {
-	coverImage?: string;
-};
-
-
 interface LevelBrowserProps {
 	sendMessage: (gameObjectName: string, methodName: string, parameter?: ReactUnityEventParameter) => void;
 }
@@ -33,7 +28,7 @@ interface LevelBrowserProps {
 const LevelBrowser: FC<LevelBrowserProps> = ({ sendMessage }) => {
 
 
-	// States
+	// Global Store
 	const { levelBrowserActive, setLevelBrowserActive, setGameModeActive, setCustomGameLaunchedFrom, setMainMenuActive } = useApplicationStore();
 	const { levels, setLevels } = useLevelsStore();
 

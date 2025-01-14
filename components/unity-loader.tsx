@@ -1,6 +1,7 @@
 /**
  * UnityLoader
  * Loader component displayed while the Unity game is loading.
+ * 
  */
 
 import { FC } from "react";
